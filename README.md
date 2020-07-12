@@ -18,11 +18,11 @@ After cloning the repo, open the project with Intellij and add maven framework s
 
 After that, install Lombok plugin:
 
-1. Right click File Tab in your Intellij menu and click Setting
+1. Right click File Tab in your Intellij menu and click Setting (For Mac User click Intellij IDEA icon and select preference)
 2. In the left tab, find Plugins and click
 3. Search for Lombok and click Install button
 4. Restart your Intellij
 
 # run
-1. First of all, run your local mongo database in default setting(localhost: 27017). Please refer to previous link guide to run your databse: https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installation-tutorials
+1. First of all, run your local mongo database in default setting(localhost: 27017). Please refer to previous link guide to run your database: https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installation-tutorials
 2. Run SpringBoot Application by right click TravelplannerServerApplication file under src/main/java folder. Select "Run TravelplannerServerAppliction".
