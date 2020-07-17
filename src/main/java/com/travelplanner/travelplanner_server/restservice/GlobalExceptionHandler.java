@@ -13,6 +13,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> IllegalArgumentHandler(Exception ex, WebRequest req) {
+        return ResponseEntity.badRequest().body(new ErrorResponse(ex.getMessage()));
+    }
+
     @ExceptionHandler(DuplicateUserException.class)
     public ResponseEntity<ErrorResponse> DuplicateUserHandler(Exception ex, WebRequest request) {
         return ResponseEntity.badRequest().body(new ErrorResponse(ex.getMessage()));
@@ -22,5 +27,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> FailedAuthenticationHandler(Exception ex, WebRequest request) {
         return ResponseEntity.badRequest().body(new ErrorResponse(ex.getMessage()));
     }
+
+
 
 }
