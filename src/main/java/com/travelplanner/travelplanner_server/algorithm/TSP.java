@@ -30,13 +30,10 @@ public class TSP {
             cost.put(route, routeCost);
         }
         // Generate all subSets of places with size >= 2
-        List<Set<String>> allSubset = findAllSubSet(nodes);
+        Map<Integer, List<Set<String>>> allSubset = findAllSubSet(nodes);
         for (int size = 2; size <= nodes.size(); size++) {
             Map<Route, RouteCost> newCost = new HashMap<>();
-            final int finalSize = size;
-            List<Set<String>> allSubsetWithSize = allSubset.stream().filter(placeSet -> placeSet.size() == finalSize)
-                    .collect(Collectors.toList());
-            allSubset.removeIf(placeSet -> placeSet.size() == finalSize); // Remove it when we finish filter the placeSet
+            List<Set<String>> allSubsetWithSize = allSubset.getOrDefault(size, new ArrayList<>());
             for (Set<String> newPlaceSet: allSubsetWithSize) {
                 for (String place_i: newPlaceSet) {
                     Long min = Long.MAX_VALUE;
@@ -73,18 +70,20 @@ public class TSP {
         return new RouteCost(min, visitOrder);
     }
 
-    private static List<Set<String>> findAllSubSet(Set<String> placeSet) {
+    private static Map<Integer, List<Set<String>>> findAllSubSet(Set<String> placeSet) {
         List<String> places = new ArrayList<>(placeSet);
-        List<Set<String>> result = new ArrayList<>();
+        Map<Integer, List<Set<String>>> result = new HashMap<>();
         Set<String> cur = new HashSet<>();
         findAllSubSet(places, 0, cur, result);
         return result;
     }
 
-    private static void findAllSubSet(List<String> place, int level, Set<String> cur, List<Set<String>> result) {
+    private static void findAllSubSet(List<String> place, int level, Set<String> cur, Map<Integer, List<Set<String>>> result) {
         if (level == place.size()) {
             if (cur.size() >= 2) {
-                result.add(new HashSet<>(cur));
+                List<Set<String>> setList = result.getOrDefault(cur.size(), new ArrayList<>());
+                setList.add(new HashSet<>(cur));
+                result.put(cur.size(), setList);
             }
             return;
         }
