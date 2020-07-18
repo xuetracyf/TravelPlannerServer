@@ -1,6 +1,7 @@
 package com.travelplanner.travelplanner_server.restservice.payload;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,6 +10,7 @@ import lombok.Getter;
 public class RecommendResponse {
 
     private String status;
-    private PlaceIdList data;
+    private RecommendData data;
+
 
 }
