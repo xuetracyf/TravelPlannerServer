@@ -1,7 +1,6 @@
 package com.travelplanner.travelplanner_server.mongodb.dal;
 
 import com.travelplanner.travelplanner_server.model.Comment;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -55,4 +54,5 @@ public class CommentDAL {
 
         return mongoTemplate.findAll(Comment.class, "comment");
     }
+
 }

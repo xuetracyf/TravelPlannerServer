@@ -10,9 +10,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 public class Comment {
     @Id
-    private String comment_id;
+    private String id;
     private String username;
     private String place_id;
     private String content;
     private String createTime;
+
 }
+
+

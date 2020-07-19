@@ -8,8 +8,8 @@ import com.travelplanner.travelplanner_server.restservice.payload.CommentRespons
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CommentController {
@@ -41,11 +41,12 @@ public class CommentController {
             throw new EmptyCommentException();
         }
         // if (commentRequest.getPlace_id() == null || )
+
         Comment comment = Comment.builder()
                 .username(commentRequest.getUsername())
                 .place_id(commentRequest.getPlace_id())
                 .content(commentRequest.getContent())
-                .comment_id(String.valueOf(idCount))
+                .id(String.valueOf(idCount))
                 .createTime("dateCreated")
                 .build();
         commentDAL.createComment(comment);
@@ -74,14 +75,6 @@ public class CommentController {
         }
     }
 
-    /**
-     * Get all comments
-     * - if you want to get a single comment, provide a comment_id in the request;
-     * - if you want to get all comments, no JSON input needed.
-     */
-    @RequestMapping(value="/getcomment", method=RequestMethod.GET)
-    public ResponseEntity<List<Comment>> get() {
-        List<Comment> listComment = commentDAL.getAllComment();
-        return ResponseEntity.ok().body(listComment);
-    }
+
 }
+
