@@ -4,8 +4,11 @@ import lombok.Getter;
 
 @Getter
 public class SignupRequest {
-    private String username;
-    private String password;
-    private String first_name;
-    private String last_name;
+    private String userName;
+    private String passWord;
+    private String passwordConfirmation;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String profileUrl;
 }
