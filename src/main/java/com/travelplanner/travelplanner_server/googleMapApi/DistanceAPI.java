@@ -20,6 +20,8 @@ public class DistanceAPI {
     // Vancouver Aquarium: ChIJp2zKeo1xhlQRWOMOmCcWJV8
     // Canada Place: ChIJIeDiJJ1xhlQRCWHIheB_Bbc
     // Museum of Vancouver: ChIJHZSzNzNyhlQRzmus61cqE5Y
+
+    // Google Graph: https://github.com/google/guava/wiki/GraphsExplained
     private static final GeoApiContext context = Context.getContext();
 
     public static ValueGraph<String, Long> generateDistGraph(LatLng startPoint, List<String> place_ids)
