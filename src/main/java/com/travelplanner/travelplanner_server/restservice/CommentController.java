@@ -41,9 +41,6 @@ public class CommentController {
         if (placeId == null || !placeDAL.hasPlace(placeId)) {
             throw new InvalidPlaceIdException();
         }
-        if (commentRequest.getContent() == null || commentRequest.getContent().length() == 0) {
-            throw new EmptyCommentException();
-        }
         Comment comment = Comment.builder()
                 .place_id(placeId)
                 .username(commentRequest.getUsername())
@@ -84,4 +81,3 @@ public class CommentController {
         return ResponseEntity.ok().body(listComment);
     }
 }
-

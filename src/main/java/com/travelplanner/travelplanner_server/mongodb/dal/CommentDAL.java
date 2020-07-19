@@ -1,24 +1,23 @@
 package com.travelplanner.travelplanner_server.mongodb.dal;
 
 import com.travelplanner.travelplanner_server.model.Comment;
-
-import com.travelplanner.travelplanner_server.model.Place;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import org.springframework.stereotype.Repository;
 
-@Repository
 @AllArgsConstructor
+@Repository
 public class CommentDAL {
 
     @Autowired
     private final MongoTemplate mongoTemplate;
+
 
     /**
      * Create a Comment instance and store it to Place's comment list
@@ -28,6 +27,7 @@ public class CommentDAL {
      */
     public Comment createComment(Comment comment) {
         return mongoTemplate.insert(comment);
+
 //    public void createComment(Comment comment) {
 //        Query query = new Query();
 //        query.addCriteria(Criteria.where("place_id").is(comment.getPlace_id()));
