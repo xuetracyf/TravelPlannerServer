@@ -33,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class UserController {
+
     @Autowired
     private UserDAL userDAL;
     @Autowired
@@ -47,6 +48,9 @@ public class UserController {
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
     private JwtUserDetailsService userDetailsService;
+
+    public UserController() {
+    }
 
     /*
      * Below is three methods for demo purpose.
