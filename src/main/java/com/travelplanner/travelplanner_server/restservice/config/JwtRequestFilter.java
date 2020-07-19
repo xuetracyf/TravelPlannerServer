@@ -31,6 +31,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    // Include Rule and Exclude Rule is no-longer needed. Can delete in the final version
 //    // Include Rule
 //    // setup FilterRegistration: https://stackoverflow.com/questions/19825946/how-to-add-a-filter-class-in-spring-boot
 //    @Bean
@@ -62,7 +63,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String jwtToken = null;
         // JWT Token is in the form "Bearer token". Remove Bearer word and get
         // only the Token
-        System.out.println("inside here!");
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             try {

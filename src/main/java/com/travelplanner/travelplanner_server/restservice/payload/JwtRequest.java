@@ -23,3 +23,4 @@ public class JwtRequest implements Serializable {
         this.setPassword(password);
     }
 }
+
