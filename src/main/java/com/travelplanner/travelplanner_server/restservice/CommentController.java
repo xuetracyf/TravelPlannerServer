@@ -44,11 +44,11 @@ public class CommentController {
                 .place_id(placeId)
                 .username(commentRequest.getUsername())
                 .content(commentRequest.getContent())
-                .comment_id("10")
+                .id("10")
                 .createTime("dateCreated")
                 .build();
         comment = commentDAL.createComment(comment);
-        CommentResponse commentResponse = new CommentResponse(comment.getComment_id());
+        CommentResponse commentResponse = new CommentResponse(comment.getId());
 
         return ResponseEntity.ok().body(commentResponse);
     }
@@ -83,4 +83,3 @@ public class CommentController {
     }
 
 }
-

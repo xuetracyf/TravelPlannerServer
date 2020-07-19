@@ -1,13 +1,13 @@
 package com.travelplanner.travelplanner_server.mongodb.dal;
 
 import com.travelplanner.travelplanner_server.model.Comment;
-
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 @AllArgsConstructor
@@ -17,7 +17,6 @@ public class CommentDAL {
     @Autowired
     private final MongoTemplate mongoTemplate;
 
-
     /**
      * Create a Comment instance and store it to Place's comment list
      *
@@ -26,6 +25,7 @@ public class CommentDAL {
      */
     public Comment createComment(Comment comment) {
         return mongoTemplate.insert(comment);
+
 
 
 //    public void createComment(Comment comment) {
@@ -81,5 +81,4 @@ public class CommentDAL {
         query.addCriteria(Criteria.where("comment_id").is(commentId));
         return mongoTemplate.exists(query, Comment.class);
     }
-
 }
