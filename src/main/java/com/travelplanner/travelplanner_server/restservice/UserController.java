@@ -20,6 +20,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.util.*;
 import org.mindrot.jbcrypt.BCrypt;
 
