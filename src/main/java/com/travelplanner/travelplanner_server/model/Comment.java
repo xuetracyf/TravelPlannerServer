@@ -15,5 +15,5 @@ public class Comment {
     private String place_id;
     private String content;
     private String createTime;
-    private String modifyTime;
+
 }

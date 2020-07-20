@@ -42,8 +42,8 @@ public class CommentController {
         // if (commentRequest.getPlace_id() == null || )
         Comment comment = Comment.builder()
                 .place_id(placeId)
-                .username(commentRequest.getUsername())
-                .content(commentRequest.getContent())
+                .username("")
+                .content("commentRequest.getContent()")
                 .id("10")
                 .createTime("dateCreated")
                 .build();
