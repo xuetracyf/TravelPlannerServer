@@ -11,7 +11,6 @@ public class CommentRequest implements Serializable {
 
     private String username;
     private String content;
-    private String comment_id;
 
 }
 
