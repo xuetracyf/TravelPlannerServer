@@ -15,7 +15,8 @@ import java.util.regex.Pattern;
 //Component is the generic stereotype for any Spring-managed component like Repository/Service/Controller .etc
 @Component
 public class UserValidator implements Validator {
-    private static final String USERNAME_PATTERN = "^[a-zA-Z0-9]{3}";
+    // simple regular expression: https://projects.lukehaas.me/regexhub/
+    private static final String USERNAME_PATTERN = "/^[a-zA-Z0-9_-]{3,16}$/";
     //1
     @Override
     public boolean supports(Class<?> clazz){
@@ -41,6 +42,7 @@ public class UserValidator implements Validator {
 
         // for user_name
         Pattern username_pattern = Pattern.compile(this.USERNAME_PATTERN);
+        System.out.println(username_pattern.matcher(user.getUsername()).matches());
         if(!username_pattern.matcher(user.getUsername()).matches()){
             System.out.println("username not matching!");
             errors.rejectValue("username", null, "Username must longer than 6!!!");

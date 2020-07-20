@@ -14,13 +14,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.util.*;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -37,12 +35,6 @@ public class UserController {
     @Autowired
     private JwtUserDetailsService userDetailsService;
 
-//    @Autowired
-//    public UserController(UserDAL userDAL, UserValidator userValidator) {
-//        this.userDAL = userDAL;
-//        this.userValidator = userValidator;
-//    }
-
     /*
      * Below is three methods for demo purpose.
      */
@@ -53,15 +45,6 @@ public class UserController {
         if (user != null) {
             throw new DuplicateUserException(user.getUsername());
         }
-//        user = User.builder()
-//                .username(signupRequest.getUsername())
-//                .password(signupRequest.getPassword())
-//                .passwordConfirmation(signupRequest.getPasswordConfirmation())
-//                .firstname(signupRequest.getFirstname())
-//                .lastname(signupRequest.getLastname())
-//                .email(signupRequest.getEmail())
-//                .profileUrl(signupRequest.getProfileUrl())
-//                .build();
         System.out.println("password: " + signupRequest.getPassword());
         System.out.println("confirmPassword: " + signupRequest.getPasswordConfirmation());
         user = new User(
@@ -75,7 +58,6 @@ public class UserController {
                 );
         userValidator.validate(user, result);
         if(result.hasErrors()){
-            System.out.println("Two password not match!");
             for(ObjectError error: result.getAllErrors()){
                 System.out.println("error is: " + error.toString());
             }

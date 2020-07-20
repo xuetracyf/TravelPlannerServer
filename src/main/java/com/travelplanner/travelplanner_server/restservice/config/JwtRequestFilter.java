@@ -1,23 +1,17 @@
 package com.travelplanner.travelplanner_server.restservice.config;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.travelplanner.travelplanner_server.restservice.config.filters.urlFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import com.travelplanner.travelplanner_server.model.services.JwtUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -30,30 +24,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
-
-    // Include Rule and Exclude Rule is no-longer needed. Can delete in the final version
-//    // Include Rule
-//    // setup FilterRegistration: https://stackoverflow.com/questions/19825946/how-to-add-a-filter-class-in-spring-boot
-//    @Bean
-//    public FilterRegistrationBean headerValidatorFilter(){
-//        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-//        registrationBean.setFilter(new urlFilter());
-//        registrationBean.addUrlPatterns("/authentication");
-//        return registrationBean;
-//    }
-//
-    // Exclude Rule
-    // control exclude in OncePerRequestFilter: https://github.com/spring-projects/spring-boot/issues/7426
-//    @Override
-//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-//        Collection<String> excludeUrlPatterns = new ArrayList<>();
-//        excludeUrlPatterns.add("/noneauthentication");
-//        excludeUrlPatterns.add("/signup");
-//        excludeUrlPatterns.add("/login");
-//        AntPathMatcher pathMatcher = new AntPathMatcher();
-//        return excludeUrlPatterns.stream()
-//                .anyMatch(p -> pathMatcher.match(p, request.getServletPath()));
-//    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
