@@ -1,15 +1,10 @@
 package com.travelplanner.travelplanner_server.restservice;
 
 import com.travelplanner.travelplanner_server.exception.EmptyCommentException;
-import com.travelplanner.travelplanner_server.exception.FailedAuthenticationException;
-import com.travelplanner.travelplanner_server.exception.NoCommentFoundException;
 import com.travelplanner.travelplanner_server.model.Comment;
-import com.travelplanner.travelplanner_server.model.User;
 import com.travelplanner.travelplanner_server.mongodb.dal.CommentDAL;
 import com.travelplanner.travelplanner_server.mongodb.dal.UserDAL;
 import com.travelplanner.travelplanner_server.restservice.payload.CommentRequest;
-import com.travelplanner.travelplanner_server.restservice.payload.DeleteCommentRequest;
-import com.travelplanner.travelplanner_server.restservice.payload.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,7 +52,7 @@ public class CommentController {
 
     /**
      * Delete an user comment
-     * @param deleteCommentRequest
+     * @param commentRequest
      * JSON example:
      * Request:
      * {
@@ -67,13 +62,21 @@ public class CommentController {
      * 200
      */
     @RequestMapping(method = RequestMethod.DELETE)
-    void delete(@RequestBody DeleteCommentRequest deleteCommentRequest) {
+    void delete(@RequestBody CommentRequest commentRequest) {
         // 1. token verification (now is verified by if(user == null))
         // 2. handle delete comment exception
         try {
-            commentDAL.deleteComment(deleteCommentRequest.getComment_id());
-        } catch (NoCommentFoundException noCommentFoundException){
-            throw noCommentFoundException;
+            commentDAL.deleteComment(commentRequest.getComment_id());
+        } catch (EmptyCommentException emptyCommentException){
+            throw emptyCommentException;
         }
+    }
+
+    /**
+     * Get a comment with commentID
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    void getSingleComment(@RequestBody CommentRequest commentRequest) {
+        
     }
 }
