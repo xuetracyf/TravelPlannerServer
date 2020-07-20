@@ -25,12 +25,9 @@ public class CommentDAL {
     public Comment createComment(Comment comment) {
         return mongoTemplate.insert(comment);
     }
-
-//    protected boolean removeComment(String content) {
-//
-//        Query query = new Query();
-//        query.addCriteria(Criteria.where("content").is(content));
-//        return mongoTemplate.doFindAndDelete();
-//    }
-
+    public Comment deleteComment(String id) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("comment_id").is(id));
+        return mongoTemplate.findAndRemove(query, Comment.class);
+    }
 }
