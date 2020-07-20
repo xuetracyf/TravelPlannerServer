@@ -18,7 +18,8 @@ public class JwtUserDetailsService implements UserDetailsService {
         user.setUsername(username);
         user.setPassword(BCrypt.hashpw("123456", BCrypt.gensalt()));
 
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
                 user.getPassword(),
                 user.isEnabled(),
                 user.isAccountNonExpired(),

@@ -45,7 +45,7 @@ public class UserValidator implements Validator {
         System.out.println(username_pattern.matcher(user.getUsername()).matches());
         if(!username_pattern.matcher(user.getUsername()).matches()){
             System.out.println("username not matching!");
-            errors.rejectValue("username", null, "Username must longer than 6!!!");
+            errors.rejectValue("username", null, "Username must between 3-16!!!");
         }
     }
 }
