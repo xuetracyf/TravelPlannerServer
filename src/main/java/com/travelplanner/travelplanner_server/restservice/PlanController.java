@@ -30,7 +30,9 @@ public class PlanController {
     public ResponseEntity<Plan> updatePlan(@RequestBody PlanRequest planRequest) {
         Plan plan = planDAL.findPlanByUserIdAndName(planRequest.getUser_id(),planRequest.getName());
         if (plan != null) {
-            plan = planDAL.updatePlan(plan,planRequest.getPlace_id(),new Date());
+            planDAL.updatePlan(plan,planRequest.getPlace_id(),new Date());
+            plan.setPlace_id(planRequest.getPlace_id());
+            plan.setUpdatedAt(new Date());
         }
         else {
 
@@ -41,7 +43,7 @@ public class PlanController {
                     .createdAt(new Date())
                     .user_id(planRequest.getUser_id())
                     .build();
-            plan = planDAL.createPlan(plan);
+            planDAL.createPlan(plan);
         }
 
         return ResponseEntity.ok().body(plan);
