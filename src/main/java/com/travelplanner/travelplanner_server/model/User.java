@@ -22,7 +22,7 @@ public class User implements UserDetails {
 
     @Id
     private String id;
-//    @Indexed(unique = true)
+    @Indexed(unique = true)
     private String username;
     private String password;
     //@Transient

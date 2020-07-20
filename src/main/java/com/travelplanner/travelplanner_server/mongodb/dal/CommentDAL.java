@@ -25,8 +25,8 @@ public class CommentDAL {
      * @param comment
      * @return a new instance of comment
      */
-    public void createComment(Comment comment) {
-        mongoTemplate.insert(comment);
+    public Comment createComment(Comment comment) {
+        return mongoTemplate.insert(comment);
     }
     public Comment deleteComment(String id) {
         Query query = new Query();
