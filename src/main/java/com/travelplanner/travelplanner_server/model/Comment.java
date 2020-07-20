@@ -20,6 +20,7 @@ public class Comment {
     private String content;
     private String createTime;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 }
 
@@ -27,3 +28,6 @@ public class Comment {
     private String modifyTime;
 }
 >>>>>>> fa059b6... basic comment API + test done
+=======
+}
+>>>>>>> 30097c5... update

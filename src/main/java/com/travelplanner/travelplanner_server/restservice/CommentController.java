@@ -1,9 +1,9 @@
 package com.travelplanner.travelplanner_server.restservice;
 
-import com.travelplanner.travelplanner_server.exception.EmptyCommentException;
 import com.travelplanner.travelplanner_server.exception.InvalidCommentIdException;
 import com.travelplanner.travelplanner_server.exception.InvalidPlaceIdException;
 import com.travelplanner.travelplanner_server.model.Comment;
+import com.travelplanner.travelplanner_server.model.User;
 import com.travelplanner.travelplanner_server.mongodb.dal.CommentDAL;
 import com.travelplanner.travelplanner_server.mongodb.dal.PlaceDAL;
 import com.travelplanner.travelplanner_server.mongodb.dal.UserDAL;
@@ -28,15 +28,16 @@ public class CommentController {
     @Autowired
     private UserDAL userDAL;
     @Autowired
-    private  PlaceDAL placeDAL;
+    private PlaceDAL placeDAL;
 
     /**
      * Create a new user comment.
-     * @param placeId url
+     *
+     * @param placeId        url
      * @param commentRequest body
      * @return comment_id of current comment
      */
-    @RequestMapping(value="/comment/{placeid}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/comment/{placeid}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentResponse> post(@PathVariable("placeid") String placeId, @RequestBody CommentRequest commentRequest) {
         if (placeId == null || !placeDAL.hasPlace(placeId)) {
             throw new InvalidPlaceIdException();
@@ -45,6 +46,7 @@ public class CommentController {
                 .place_id(placeId)
                 .username(commentRequest.getUsername())
                 .content(commentRequest.getContent())
+                .id("10")
                 .createTime("dateCreated")
                 .build();
         comment = commentDAL.createComment(comment);
@@ -53,13 +55,14 @@ public class CommentController {
         return ResponseEntity.ok().body(commentResponse);
     }
 
+
     /**
      * Delete a specified comment from a specified place.
      * @param placeId place_id
      * @param commentId comment_id
      */
-    @RequestMapping(value="/comment/{place_id}/{comment_id}", method=RequestMethod.DELETE)
-    public void delete(@PathVariable("place_id") String placeId, @PathVariable("comment_id") String commentId) {
+    @RequestMapping(value = "/comment/{place_id}/{comment_id}", method = RequestMethod.DELETE)
+    public void delete (@PathVariable("place_id") String placeId, @PathVariable("comment_id") String commentId){
 
         if (placeId == null || !placeDAL.hasPlace(placeId)) {
             throw new InvalidPlaceIdException();
@@ -75,9 +78,10 @@ public class CommentController {
      * @param placeId
      * @return
      */
-    @RequestMapping(value="/comments/{placeid}", method=RequestMethod.GET)
-    public ResponseEntity<List<Comment>> get(@PathVariable("placeid") String placeId) {
+    @RequestMapping(value = "/comments/{placeid}", method = RequestMethod.GET)
+    public ResponseEntity<List<Comment>> get (@PathVariable("placeid") String placeId){
         List<Comment> listComment = commentDAL.getAllCommentById(placeId);
         return ResponseEntity.ok().body(listComment);
     }
 }
+

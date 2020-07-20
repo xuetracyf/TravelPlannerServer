@@ -28,6 +28,7 @@ public class CommentDAL {
     public Comment createComment(Comment comment) {
         return mongoTemplate.insert(comment);
 
+
 //    public void createComment(Comment comment) {
 //        Query query = new Query();
 //        query.addCriteria(Criteria.where("place_id").is(comment.getPlace_id()));
@@ -47,7 +48,6 @@ public class CommentDAL {
         query.addCriteria(Criteria.where("place_id").is(place_id));
         query.addCriteria(Criteria.where("comment_id").is(comment_id));
         mongoTemplate.findAndRemove(query, Comment.class);
-        // mongoTemplate.findAndRemove(query, Place.class);
     }
 
     /**
