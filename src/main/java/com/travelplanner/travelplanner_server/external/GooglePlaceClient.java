@@ -1,0 +1,446 @@
+package com.travelplanner.travelplanner_server.external;
+
+import com.google.maps.*;
+import com.google.maps.GeoApiContext;
+import com.google.maps.NearbySearchRequest;
+import com.google.maps.PlacesApi;
+import com.google.maps.model.*;
+import com.travelplanner.travelplanner_server.model.City;
+import com.travelplanner.travelplanner_server.model.Place;
+
+import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import com.google.maps.FindPlaceFromTextRequest.InputType;
+import com.google.maps.FindPlaceFromTextRequest.Response;
+
+
+/*
+* Client class of Google Place API
+* */
+
+public class GooglePlaceClient {
+    private static final String API_KEY = "AIzaSyCZDvripjGjR_iPe68oa9t8HaT13ZrCEYA";
+    private static final String city_places_template = "tourist+attraction+in+";
+    private static final String range_places_template = "tourist+attraction+near+";
+    private static final String restruant_template = "restaurant+near+";
+
+    private GeoApiContext context;
+
+
+    public GooglePlaceClient() {
+        this.context = new GeoApiContext.Builder()
+                .apiKey(API_KEY)
+                .connectTimeout(600, TimeUnit.MILLISECONDS)
+                .retryTimeout(600, TimeUnit.MILLISECONDS)
+                .build();
+    }
+
+    /*
+     * lower layer of the client:
+     * PART I:
+     * Get a list of places
+     * Contains a certain amount of Places
+     * by calling google client directly:
+     * 1.Find Place requests(findplacefromtext)
+     * 2.Nearby Search requests(nearbysearch)
+     * 3.Text Search requests(textsearch)
+     *
+     * //todo
+     * PART II:
+     * 4. Place Detail Search
+     *
+     * //todo
+     * PART III:
+     * 5. Auto complete
+     * */
+
+    //1.Find Place requests(findplacefromtext)
+    //input String can be a name, address, or phone number.
+    public List<Place> getPlaceFromTextSearch(String input, int max_place_number, boolean input_is_a_phonenumber, FindPlaceFromTextRequest.LocationBias bias) {
+        //prepare result
+        HashSet<Place> places = new HashSet<Place>();
+        while (places.size() < max_place_number) {
+            FindPlaceFromTextRequest request = input_is_a_phonenumber
+                    ? PlacesApi.findPlaceFromText(context, input, InputType.PHONE_NUMBER)
+                    : PlacesApi.findPlaceFromText(context, input, InputType.TEXT_QUERY);
+
+            request.fields(FindPlaceFromTextRequest.FieldMask.NAME,
+                    FindPlaceFromTextRequest.FieldMask.PLACE_ID,
+                    FindPlaceFromTextRequest.FieldMask.GEOMETRY,
+                    FindPlaceFromTextRequest.FieldMask.OPENING_HOURS,
+                    FindPlaceFromTextRequest.FieldMask.GEOMETRY,
+                    FindPlaceFromTextRequest.FieldMask.RATING,
+                    FindPlaceFromTextRequest.FieldMask.PHOTOS,
+                    FindPlaceFromTextRequest.FieldMask.TYPES,
+                    FindPlaceFromTextRequest.FieldMask.PRICE_LEVEL);
+
+            request.locationBias(bias);
+
+            try {
+                FindPlaceFromText response = request.await();
+                PlacesSearchResult[] results = response.candidates;
+
+                if (results.length == 0) break;
+
+                //de-duplicate
+                int last_round_size = places.size();
+
+                for (int i = 0; places.size() < max_place_number && i < results.length; i++) {
+                    PlacesSearchResult new_place_result = results[i];
+                    Place new_place = getPlaceDetailsFromPlaceDetailSearch(new_place_result.placeId);
+                    places.add(new_place);
+
+                    //if have duplicate, the search is done.
+                    if (places.size() == last_round_size) {
+                        return new ArrayList<Place>(places);
+                    }
+                    last_round_size = places.size();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return new ArrayList<Place>(places);
+    }
+
+    //2.Nearby Search requests(nearbysearch)
+    public List<Place> getPlacesFromNearbySearchrequests(LatLng location, int radius_in_meter, int max_place_number) {
+        //prepare result
+        HashSet<Place> places = new HashSet<Place>();
+
+        String nextPageToken = "";
+        while (places.size() < max_place_number) {
+            NearbySearchRequest request = nextPageToken.length() == 0
+                    ? PlacesApi.nearbySearchQuery(this.context, location)
+                    : PlacesApi.nearbySearchNextPage(this.context, nextPageToken);
+
+            request.location(location);
+            //radius larger than 50000 is not support by google API right now.
+            request.radius(Math.min(radius_in_meter, 50000));
+            request.type(PlaceType.TOURIST_ATTRACTION);
+            try {
+                PlacesSearchResponse response = request.await();
+                PlacesSearchResult[] results = response.results;
+
+                if (results.length == 0) break;
+
+                //for de-duplicate
+                int last_round_size = places.size();
+                for (int i = 0; places.size() < max_place_number && i < results.length; i++) {
+                    PlacesSearchResult new_place_result = results[i];
+
+                    Place new_place = Place.builder()
+                            .name(new_place_result.name)
+                            .total_rating(new_place_result.userRatingsTotal)
+                            .place_id(new_place_result.placeId)
+                            .photo_refs(getPhotoRefsFromResult(new_place_result))
+                            .location(new_place_result.geometry.location)
+                            .build();
+
+                    places.add(new_place);
+
+                    //for de-duplicate
+                    if (places.size() == last_round_size) {
+                        return new ArrayList<Place>(places);
+                    }
+                    last_round_size = places.size();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        return new ArrayList<Place>(places);
+    }
+
+    //3. Text Search requests(textsearch)
+    public List<Place> getPlacesFromTextSearchQuery(String query_text, int max_place_number) {
+
+        //prepare result
+        HashSet<Place> places = new HashSet<Place>();
+
+        String nextPageToken = "";
+
+        //call google api to get the list
+        while (places.size() < max_place_number) {
+            TextSearchRequest request = nextPageToken.length() == 0
+                    ? PlacesApi.textSearchQuery(this.context, query_text)
+                    : PlacesApi.textSearchNextPage(this.context, nextPageToken);
+
+            try {
+                PlacesSearchResponse search_response = request.await();
+                PlacesSearchResult[] results = search_response.results;
+
+                if (results.length == 0) break;
+
+                //for de-duplicate
+                int last_round_size = places.size();
+                for (int i = 0; places.size() < max_place_number && i < results.length; i++) {
+                    PlacesSearchResult new_place_result = results[i];
+
+                    Place new_place = Place.builder()
+                            .name(new_place_result.name)
+                            .total_rating(new_place_result.userRatingsTotal)
+                            .place_id(new_place_result.placeId)
+                            .photo_refs(getPhotoRefsFromResult(new_place_result))
+                            .location(new_place_result.geometry.location)
+                            .build();
+
+                    places.add(new_place);
+
+                    //for de-duplicate
+                    if (last_round_size == places.size()) {
+                        return new ArrayList<Place>(places);
+                    }
+                    last_round_size = places.size();
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
+        }
+
+        return new ArrayList<Place>(places);
+    }
+
+    public List<Place> getPlacesFromTextSearchQueryRect(String query_text, int max_place_number, double left_top_lat, double left_top_lng, double right_down_lat, double right_down_lng) {
+
+        //prepare result
+        HashSet<Place> places = new HashSet<Place>();
+
+        String nextPageToken = "";
+
+        //call google api to get the list
+        while (places.size() < max_place_number) {
+            TextSearchRequest request = nextPageToken.length() == 0
+                    ? PlacesApi.textSearchQuery(this.context, query_text)
+                    : PlacesApi.textSearchNextPage(this.context, nextPageToken);
+
+            try {
+                PlacesSearchResponse search_response = request.await();
+                PlacesSearchResult[] results = search_response.results;
+
+                if (results.length == 0) break;
+
+                for (int i = 0; places.size() < max_place_number && i < results.length; i++) {
+                    PlacesSearchResult new_place_result = results[i];
+
+                    Place new_place = Place.builder()
+                            .name(new_place_result.name)
+                            .total_rating(new_place_result.userRatingsTotal)
+                            .place_id(new_place_result.placeId)
+                            .photo_refs(getPhotoRefsFromResult(new_place_result))
+                            .location(new_place_result.geometry.location)
+                            .build();
+
+                    if (new_place.isInRect(new LatLng(left_top_lat, left_top_lng), new LatLng(right_down_lat, right_down_lng))) {
+                        places.add(new_place);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
+        }
+
+        return new ArrayList<Place>(places);
+    }
+
+    public List<Place> getPlacesFromTextSearchQueryCircle(String query_text, int max_place_number, double center_lat, double center_lng, int radius_in_meter) {
+
+        //prepare result
+        HashSet<Place> places = new HashSet<Place>();
+
+        String nextPageToken = "";
+
+        //call google api to get the list
+        while (places.size() < max_place_number) {
+            TextSearchRequest request = nextPageToken.length() == 0
+                    ? PlacesApi.textSearchQuery(this.context, query_text)
+                    : PlacesApi.textSearchNextPage(this.context, nextPageToken);
+
+            try {
+                PlacesSearchResponse search_response = request.await();
+                PlacesSearchResult[] results = search_response.results;
+
+                if (results.length == 0) break;
+
+                for (int i = 0; places.size() < max_place_number && i < results.length; i++) {
+                    PlacesSearchResult new_place_result = results[i];
+
+                    Place new_place = Place.builder()
+                            .name(new_place_result.name)
+                            .total_rating(new_place_result.userRatingsTotal)
+                            .place_id(new_place_result.placeId)
+                            .photo_refs(getPhotoRefsFromResult(new_place_result))
+                            .location(new_place_result.geometry.location)
+                            .build();
+
+                    if (new_place.isInCircle(new LatLng(center_lat, center_lng), radius_in_meter)) {
+                        places.add(new_place);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
+        }
+
+        return new ArrayList<Place>(places);
+    }
+
+    //4.
+    private Place getPlaceDetailsFromPlaceDetailSearch(String place_id) {
+        PlaceDetailsRequest request = PlacesApi.placeDetails(context, place_id);
+        request.fields(PlaceDetailsRequest.FieldMask.NAME,
+                PlaceDetailsRequest.FieldMask.USER_RATINGS_TOTAL,
+                PlaceDetailsRequest.FieldMask.RATING,
+                PlaceDetailsRequest.FieldMask.GEOMETRY,
+                PlaceDetailsRequest.FieldMask.GEOMETRY_LOCATION,
+                PlaceDetailsRequest.FieldMask.OPENING_HOURS,
+                PlaceDetailsRequest.FieldMask.PHOTOS);
+
+        PlaceDetails details = null;
+        try {
+            details = request.await();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Place result_place = Place.builder()
+                .name(details.name)
+                .place_id(place_id)
+                .location(details.geometry.location)
+                .photo_refs(getPhotoRefsFromResult(details))
+                .total_rating(details.userRatingsTotal)
+                .build();
+
+        return result_place;
+    }
+
+    /*
+     * innerclass utils
+     * */
+    private List<String> getPhotoRefsFromResult(PlaceDetails details) {
+        List<String> place_photo_refs = new ArrayList<>();
+        if (details.photos != null && details.photos.length > 0) {
+            Arrays.stream(details.photos).forEach(e -> place_photo_refs.add(e.photoReference));
+        }
+        return place_photo_refs;
+    }
+
+    private List<String> getPhotoRefsFromResult(PlacesSearchResult place) {
+        List<String> place_photo_refs = new ArrayList<>();
+        if (place.photos != null && place.photos.length > 0) {
+            Arrays.stream(place.photos).forEach(e -> place_photo_refs.add(e.photoReference));
+        }
+        return place_photo_refs;
+    }
+
+    private LatLng getCityCenterPosition(String city_name) {
+        return getPlacesFromTextSearchQuery(city_name, 1).get(0).getLocation();
+    }
+
+    /*
+     * public interfaces
+     * */
+
+    public List<Place> getCityPlacesInCircle(String city_name, int max_place_number, int radius_in_meter) {
+        LatLng city_center = getCityCenterPosition(city_name);
+        return getPlacesFromTextSearchQueryCircle(city_places_template + city_name, max_place_number, city_center.lat, city_center.lng, radius_in_meter);
+    }
+
+    public List<Place> getCityPlacesInRect(String city_name, int max_place_number, double left_top_lat, double left_top_lng, double right_down_lat, double right_down_lng) {
+        return getPlacesFromTextSearchQueryRect(city_places_template + city_name, max_place_number, left_top_lat, left_top_lng, right_down_lat, right_down_lng);
+    }
+
+    public List<Place> getCityPlaces(String city_name, int max_place_number) {
+        return null;
+    }
+
+    public List<Place> getCityPlaces(String city_name, int max_place_number, int method) {
+        return null;
+    }
+
+
+    /*
+     * debugging util
+     *  */
+    public static void PrintPlaceDetails(Place place) {
+        System.out.println("------------------");
+        System.out.println("name: " + place.getName());
+        System.out.println("placeid: " + place.getPlace_id());
+        System.out.println("total rating: " + place.getTotal_rating());
+        System.out.println("location: " + place.getLocation().lat + place.getLocation().lng);
+        //System.out.println(place.getPhoto_refs());
+        System.out.println("------------------");
+    }
+
+    public static void PrintPlacesDetails(List<Place> places) {
+        for (Place place : places) {
+            PrintPlaceDetails(place);
+        }
+    }
+
+    /*
+     * temp tests
+     * */
+    public static void main(String[] args)
+    {
+        test5();
+    }
+
+    public static void test1() {
+        GooglePlaceClient client = new GooglePlaceClient();
+        LatLng center = new LatLng(37.771212, -122.432810);
+        FindPlaceFromTextRequest.LocationBiasCircular circle_area = new FindPlaceFromTextRequest.LocationBiasCircular(center, 30000);
+        List<Place> list1 = client.getPlaceFromTextSearch("pier 39", 1, false, circle_area);
+        PrintPlacesDetails(list1);
+    }
+
+    public static void test2() {
+        GooglePlaceClient client = new GooglePlaceClient();
+        LatLng center = new LatLng(37.771212, -122.432810);
+        List<Place> list1 = client.getPlacesFromNearbySearchrequests(center, 200000, 10);
+        PrintPlacesDetails(list1);
+    }
+
+    public static void test3() {
+        GooglePlaceClient client = new GooglePlaceClient();
+        String city_name = "San Francisco";
+        List<Place> list1 = client.getPlacesFromTextSearchQuery(city_places_template + city_name, 50);
+        PrintPlacesDetails(list1);
+    }
+
+    public static void test4() {
+        GooglePlaceClient client = new GooglePlaceClient();
+        String site = "Pier 39";
+        List<Place> list1 = client.getPlacesFromTextSearchQuery(range_places_template + site, 5);
+        PrintPlacesDetails(list1);
+    }
+
+    public static void test5() {
+        GooglePlaceClient client = new GooglePlaceClient();
+        String city_name = "San Francisco";
+        List<Place> list = client.getCityPlacesInCircle(city_name, 30, 50000);
+        PrintPlacesDetails(list);
+    }
+
+    public static void test6() {
+        GooglePlaceClient client = new GooglePlaceClient();
+        String city_name = "San Francisco";
+        List<Place> list = client.getCityPlacesInRect(city_name,10,37.785063, -122.467674, 37.754999, -122.395695);
+        PrintPlacesDetails(list);
+        System.out.println("end");
+    }
+
+}
