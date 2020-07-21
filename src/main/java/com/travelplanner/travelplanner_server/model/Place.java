@@ -1,7 +1,7 @@
 package com.travelplanner.travelplanner_server.model;
 
-import java.util.List;
 
+import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.model.LatLng;
 import lombok.Builder;
@@ -11,13 +11,18 @@ import lombok.Value;
 @Value
 @Builder
 @Getter
-
 public class Place {
-    String name;
-    String place_id;
-    LatLng location; //com.google.maps.model.LatLng;
-    int total_rating;
-    List<String> photo_refs;
+
+    private LatLng location; //com.google.maps.model.LatLng;
+    private int total_rating;
+    private List<String> photo_refs;
+
+    private String place_id;
+    private String name;
+    private String description;
+    private List<Comment> allComments;
+    private String content;
+    private String createTime;
 
     @Override
     public boolean equals(Object obj) {
@@ -75,6 +80,7 @@ public class Place {
             e.printStackTrace();
         }
     }
+
 }
 
 

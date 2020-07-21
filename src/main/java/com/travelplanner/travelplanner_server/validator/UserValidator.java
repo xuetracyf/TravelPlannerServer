@@ -49,5 +49,6 @@ public class UserValidator implements Validator {
             System.out.println("username not matching!");
             errors.rejectValue("username", null, "Username must between 3-16!!!");
         }
+
     }
 }

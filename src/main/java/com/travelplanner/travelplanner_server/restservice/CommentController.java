@@ -3,27 +3,27 @@ package com.travelplanner.travelplanner_server.restservice;
 import com.travelplanner.travelplanner_server.exception.EmptyCommentException;
 import com.travelplanner.travelplanner_server.model.Comment;
 import com.travelplanner.travelplanner_server.mongodb.dal.CommentDAL;
-import com.travelplanner.travelplanner_server.mongodb.dal.UserDAL;
 import com.travelplanner.travelplanner_server.restservice.payload.CommentRequest;
+import com.travelplanner.travelplanner_server.restservice.payload.CommentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/comment")
 public class CommentController {
 
     @Autowired
     private final CommentDAL commentDAL;
-    private final UserDAL userDAL;
     private int idCount = 0;
 
-    public CommentController(CommentDAL commentDAL, UserDAL userDAL) {
+    public CommentController(CommentDAL commentDAL) {
         this.commentDAL = commentDAL;
-        this.userDAL = userDAL;
     }
 
     /**
-     * Create a new user comment
+     * Create a new user comment.
      * @param commentRequest
      * JSON example:
      * Request:
@@ -35,23 +35,27 @@ public class CommentController {
      * Response:
      * 200
      */
-    @RequestMapping(method = RequestMethod.POST)
-    void post(@RequestBody CommentRequest commentRequest) {
+    @RequestMapping(value="/comment", method=RequestMethod.POST)
+    public ResponseEntity<CommentResponse> post(@RequestBody CommentRequest commentRequest) {
         if (commentRequest.getContent() == null || commentRequest.getContent().length() == 0) {
             throw new EmptyCommentException();
         }
+        // if (commentRequest.getPlace_id() == null || )
         Comment comment = Comment.builder()
                 .username(commentRequest.getUsername())
                 .place_id(commentRequest.getPlace_id())
                 .content(commentRequest.getContent())
-                .id(String.valueOf(idCount++))
+                .comment_id(String.valueOf(idCount))
                 .createTime("dateCreated")
                 .build();
         commentDAL.createComment(comment);
+        CommentResponse commentResponse = new CommentResponse(String.valueOf(idCount));
+        idCount++;
+        return ResponseEntity.ok().body(commentResponse);
     }
 
     /**
-     * Delete an user comment
+     * Delete an user comment.
      * @param commentRequest
      * JSON example:
      * Request:
@@ -61,22 +65,23 @@ public class CommentController {
      * Response:
      * 200
      */
-    @RequestMapping(method = RequestMethod.DELETE)
-    void delete(@RequestBody CommentRequest commentRequest) {
-        // 1. token verification (now is verified by if(user == null))
-        // 2. handle delete comment exception
+    @RequestMapping(value="/comment", method=RequestMethod.DELETE)
+    public void delete(@RequestBody CommentRequest commentRequest) {
         try {
             commentDAL.deleteComment(commentRequest.getComment_id());
-        } catch (EmptyCommentException emptyCommentException){
+        } catch (EmptyCommentException emptyCommentException) {
             throw emptyCommentException;
         }
     }
 
     /**
-     * Get a comment with commentID
+     * Get all comments
+     * - if you want to get a single comment, provide a comment_id in the request;
+     * - if you want to get all comments, no JSON input needed.
      */
-    @RequestMapping(method = RequestMethod.GET)
-    void getSingleComment(@RequestBody CommentRequest commentRequest) {
-        
+    @RequestMapping(value="/getcomment", method=RequestMethod.GET)
+    public ResponseEntity<List<Comment>> get() {
+        List<Comment> listComment = commentDAL.getAllComment();
+        return ResponseEntity.ok().body(listComment);
     }
 }
