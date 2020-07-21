@@ -1,10 +1,11 @@
 package com.travelplanner.travelplanner_server.restservice;
 
-
 import com.travelplanner.travelplanner_server.exception.DuplicateUserException;
 import com.travelplanner.travelplanner_server.exception.FailedAuthenticationException;
+import com.travelplanner.travelplanner_server.model.UsedToken;
 import com.travelplanner.travelplanner_server.model.services.JwtUserDetailsService;
 import com.travelplanner.travelplanner_server.model.validator.UserValidator;
+import com.travelplanner.travelplanner_server.mongodb.dal.TokenDAL;
 import com.travelplanner.travelplanner_server.mongodb.dal.UserDAL;
 import com.travelplanner.travelplanner_server.model.User;
 import com.travelplanner.travelplanner_server.restservice.config.JwtTokenUtil;
@@ -18,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
 import org.mindrot.jbcrypt.BCrypt;
@@ -26,6 +28,8 @@ import org.mindrot.jbcrypt.BCrypt;
 public class UserController {
     @Autowired
     private UserDAL userDAL;
+    @Autowired
+    private TokenDAL tokenDAL;
     @Autowired
     private UserValidator userValidator;
     @Autowired
@@ -40,7 +44,6 @@ public class UserController {
      */
     @RequestMapping(value="/signup", method= RequestMethod.POST)
     public void createNewUser(@RequestBody SignupRequest signupRequest, BindingResult result, HttpSession session) {
-        System.out.println("registering!");
         User user = userDAL.findUserByUsername(signupRequest.getUsername());
         if (user != null) {
             throw new DuplicateUserException(user.getUsername());
@@ -81,13 +84,16 @@ public class UserController {
     }
     // here is the test-controller
     @RequestMapping(value="/noneauthentication", method=RequestMethod.GET)
-    public String noauthentication(){
+    public String noneauthentication(){
         return "No Need authentication works!";
     }
+//    @RequestMapping(value="/logouttt", method=RequestMethod.GET)
+//    public String logouttt(){
+//        return "We logged-outttt already!";
+//    }
 
     @RequestMapping(value = "/login", method=RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest jwtRequest) {
-
         User user = userDAL.findUserByUsername(jwtRequest.getUsername());
         // Handle case where user is not exist or password is different.
         if (user == null || !BCrypt.checkpw(jwtRequest.getPassword(), user.getPassword())) {
@@ -99,6 +105,19 @@ public class UserController {
         System.out.println("token is:" + token);
         return ResponseEntity.ok(new JwtResponse(token));
     }
+
+    @RequestMapping(value="/signout", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<JwtResponse> signout(HttpServletRequest request){
+        System.out.println("singing-out!");
+        String token = null;
+        String requestTokenHeader = request.getHeader("Authorization");
+        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")){
+            token = requestTokenHeader.substring(7);
+            System.out.println("block-token is :" + token);
+            UsedToken usedToken = new UsedToken(token);
+            tokenDAL.createUsedToken(usedToken);
+            System.out.println("Successfully Blocked token: " + token);
+        }
+        return ResponseEntity.ok(new JwtResponse("Successfully Logout"));
+    }
 }
-
-

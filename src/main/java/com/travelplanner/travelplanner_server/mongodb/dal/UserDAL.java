@@ -1,6 +1,5 @@
 package com.travelplanner.travelplanner_server.mongodb.dal;
 
-
 import com.travelplanner.travelplanner_server.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;

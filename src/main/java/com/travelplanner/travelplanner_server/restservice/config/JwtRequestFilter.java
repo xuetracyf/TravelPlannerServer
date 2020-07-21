@@ -6,6 +6,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.travelplanner.travelplanner_server.exception.InvalidTokenException;
+import com.travelplanner.travelplanner_server.model.UsedToken;
+import com.travelplanner.travelplanner_server.mongodb.dal.TokenDAL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +24,8 @@ import io.jsonwebtoken.ExpiredJwtException;
 public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
+    @Autowired
+    private TokenDAL tokenDAL;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -35,6 +40,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // only the Token
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
+            if(tokenDAL.findUsedTokenByToken(jwtToken) != null){
+                //throw new ServletException("This token is already being blocked! Can't used anymore!");
+                throw new InvalidTokenException();
+            }
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
@@ -47,8 +56,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
         // Once we get the token validate it.
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            System.out.println("Filtering Request!!!");
             UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
-        // User userDetails = this.userDAL.findUserByUsername(username);
         // if token is valid configure Spring Security to manually set
         // authentication
             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
@@ -65,3 +74,4 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 }
+
