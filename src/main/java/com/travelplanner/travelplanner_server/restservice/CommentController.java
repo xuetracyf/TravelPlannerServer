@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-
 @RestController
-@RequestMapping("/comment")
 public class CommentController {
 
     @Autowired
@@ -41,15 +39,16 @@ public class CommentController {
         if (placeId == null || !placeDAL.hasPlace(placeId)) {
             throw new InvalidPlaceIdException();
         }
+        // if (commentRequest.getPlace_id() == null || )
         Comment comment = Comment.builder()
                 .place_id(placeId)
                 .username(commentRequest.getUsername())
                 .content(commentRequest.getContent())
-                .id("10")
+                .comment_id("10")
                 .createTime("dateCreated")
                 .build();
         comment = commentDAL.createComment(comment);
-        CommentResponse commentResponse = new CommentResponse(comment.getId());
+        CommentResponse commentResponse = new CommentResponse(comment.getComment_id());
 
         return ResponseEntity.ok().body(commentResponse);
     }
@@ -67,6 +66,7 @@ public class CommentController {
         }
         if (commentId == null || !commentDAL.hasComment(commentId)) {
             throw new InvalidCommentIdException();
+
         }
         commentDAL.deleteComment(placeId, commentId);
     }
@@ -82,12 +82,5 @@ public class CommentController {
         return ResponseEntity.ok().body(listComment);
     }
 
-    /**
-     * Get a comment with commentID
-     */
-    @RequestMapping(method = RequestMethod.GET)
-    void getSingleComment(@RequestBody CommentRequest commentRequest) {
-        
-    }
 }
 
