@@ -3,8 +3,8 @@ package com.travelplanner.travelplanner_server.restservice;
 
 import com.travelplanner.travelplanner_server.exception.DuplicateUserException;
 import com.travelplanner.travelplanner_server.exception.FailedAuthenticationException;
-import com.travelplanner.travelplanner_server.model.services.JwtUserDetailsService;
-import com.travelplanner.travelplanner_server.model.validator.UserValidator;
+import com.travelplanner.travelplanner_server.services.JwtUserDetailsService;
+import com.travelplanner.travelplanner_server.validator.UserValidator;
 import com.travelplanner.travelplanner_server.mongodb.dal.UserDAL;
 import com.travelplanner.travelplanner_server.model.User;
 import com.travelplanner.travelplanner_server.restservice.config.JwtTokenUtil;

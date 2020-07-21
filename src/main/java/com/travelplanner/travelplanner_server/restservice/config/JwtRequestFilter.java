@@ -13,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import com.travelplanner.travelplanner_server.model.services.JwtUserDetailsService;
+import com.travelplanner.travelplanner_server.services.JwtUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 
 // The JwtRequestFilter checks if the request has a valid JWT token, if it has a valid JWT token, then it sets the authentication in context to specify that the current user is authenticated!

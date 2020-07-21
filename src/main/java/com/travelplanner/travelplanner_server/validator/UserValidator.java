@@ -1,12 +1,10 @@
-package com.travelplanner.travelplanner_server.model.validator;
+package com.travelplanner.travelplanner_server.validator;
 
 import com.travelplanner.travelplanner_server.model.User;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-
-import java.util.regex.Pattern;
 
 //Custom Validations
 //Spring validator docs: https://docs.spring.io/autorepo/docs/spring/3.2.x/spring-framework-reference/html/validation.html
@@ -16,7 +14,7 @@ import java.util.regex.Pattern;
 @Component
 public class UserValidator implements Validator {
     // simple regular expression: https://projects.lukehaas.me/regexhub/
-    private static final String USERNAME_PATTERN = "/^[a-zA-Z0-9_-]{3,16}$/";
+    //private static final String USERNAME_PATTERN = "/^[a-zA-Z0-9_-]{3,16}$/";
     //1
     @Override
     public boolean supports(Class<?> clazz){
@@ -41,11 +39,11 @@ public class UserValidator implements Validator {
         }
 
         // for user_name
-        Pattern username_pattern = Pattern.compile(this.USERNAME_PATTERN);
-        System.out.println(username_pattern.matcher(user.getUsername()).matches());
-        if(!username_pattern.matcher(user.getUsername()).matches()){
-            System.out.println("username not matching!");
-            errors.rejectValue("username", null, "Username must between 3-16!!!");
-        }
+//        Pattern username_pattern = Pattern.compile(this.USERNAME_PATTERN);
+//        System.out.println(username_pattern.matcher(user.getUsername()).matches());
+//        if(!username_pattern.matcher(user.getUsername()).matches()){
+//            System.out.println("username not matching!");
+//            errors.rejectValue("username", null, "Username must between 3-16!!!");
+//        }
     }
 }

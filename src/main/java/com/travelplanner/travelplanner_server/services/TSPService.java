@@ -1,13 +1,15 @@
-package com.travelplanner.travelplanner_server.algorithm;
+package com.travelplanner.travelplanner_server.services;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.graph.ValueGraph;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TSP {
+@Service
+public class TSPService {
     /*
      * Implement TSP using dynamic programming
      * C(S, i) be the cost of the minimum cost path visiting each vertex in set S exactly once,
@@ -19,7 +21,7 @@ public class TSP {
      * reference: https://www.geeksforgeeks.org/travelling-salesman-problem-set-1/?ref=rp
      * Time: O(n^2*2^n)
      */
-    public static RouteCost findShortestPath(ValueGraph<String, Long> distGraph) {
+    public RouteCost findShortestPath(ValueGraph<String, Long> distGraph) {
         Set<String> nodes = new HashSet<>(distGraph.nodes());
         nodes.remove("startPosition");
         // Store the cost of every route
@@ -72,7 +74,7 @@ public class TSP {
         return new RouteCost(min, visitOrder);
     }
 
-    private static Map<Integer, List<Set<String>>> findAllSubSet(Set<String> placeSet) {
+    private Map<Integer, List<Set<String>>> findAllSubSet(Set<String> placeSet) {
         List<String> places = new ArrayList<>(placeSet);
         Map<Integer, List<Set<String>>> result = new HashMap<>();
         Set<String> cur = new HashSet<>();
@@ -80,7 +82,7 @@ public class TSP {
         return result;
     }
 
-    private static void findAllSubSet(List<String> place, int level, Set<String> cur, Map<Integer, List<Set<String>>> result) {
+    private void findAllSubSet(List<String> place, int level, Set<String> cur, Map<Integer, List<Set<String>>> result) {
         if (level == place.size()) {
             if (cur.size() >= 2) {
                 List<Set<String>> setList = result.getOrDefault(cur.size(), new ArrayList<>());
