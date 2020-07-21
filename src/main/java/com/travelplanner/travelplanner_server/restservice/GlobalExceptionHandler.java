@@ -3,6 +3,7 @@ package com.travelplanner.travelplanner_server.restservice;
 
 import com.travelplanner.travelplanner_server.exception.DuplicateUserException;
 import com.travelplanner.travelplanner_server.exception.FailedAuthenticationException;
+import com.travelplanner.travelplanner_server.exception.InvalidTokenException;
 import com.travelplanner.travelplanner_server.restservice.payload.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -28,6 +29,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.badRequest().body(new ErrorResponse(ex.getMessage()));
     }
 
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ErrorResponse> InvalidTokenHandler(Exception ex, WebRequest request){
+        return ResponseEntity.badRequest().body(new ErrorResponse(ex.getMessage()));
+    }
 
 
 }
