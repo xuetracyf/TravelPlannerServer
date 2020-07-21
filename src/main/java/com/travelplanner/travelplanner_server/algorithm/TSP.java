@@ -5,7 +5,6 @@ import com.google.common.collect.Sets;
 import com.google.common.graph.ValueGraph;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TSP {
     /*
