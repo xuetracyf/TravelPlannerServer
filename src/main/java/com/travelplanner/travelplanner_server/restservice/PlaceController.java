@@ -34,6 +34,7 @@ public class PlaceController {
      * @return
      */
     @RequestMapping(value = "/attraction/{placeid}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+
     public ResponseEntity<PlaceResponse> getOnePlace(@PathVariable("placeid") String placeId,
                                              @RequestParam(value = "max_width", required = false) String maxWidth) {
         if (placeId == null) {
@@ -61,16 +62,11 @@ public class PlaceController {
      * @param maxWidth max width of the attraction pic, default 400
      * @return
      */
+
     @RequestMapping(value = "/attractions", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Place>> getAllPlace(@RequestParam(value = "max_width", required = false) String maxWidth) {
         int width = maxWidth == null ? 400 : Integer.parseInt(maxWidth);
         return ResponseEntity.ok(placeDAL.getAllPlace(width));
 
     }
-        @GetMapping(value = "/attraction/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<PlaceDetailResponse> getAttractionDetail(@RequestHeader("Authentication") String tokenHeader,
-                                                                       @PathVariable("id") String id) {
-            String jwtToken = tokenHeader.substring(7);
-            return ResponseEntity.ok().body(new PlaceDetailResponse());
-        }
 }

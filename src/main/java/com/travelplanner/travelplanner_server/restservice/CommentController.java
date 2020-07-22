@@ -1,5 +1,6 @@
 package com.travelplanner.travelplanner_server.restservice;
 
+import com.travelplanner.travelplanner_server.exception.EmptyCommentException;
 import com.travelplanner.travelplanner_server.exception.InvalidCommentIdException;
 import com.travelplanner.travelplanner_server.exception.InvalidPlaceIdException;
 import com.travelplanner.travelplanner_server.model.Comment;
@@ -39,7 +40,6 @@ public class CommentController {
         if (placeId == null || !placeDAL.hasPlace(placeId)) {
             throw new InvalidPlaceIdException();
         }
-        // if (commentRequest.getPlace_id() == null || )
         Comment comment = Comment.builder()
                 .place_id(placeId)
                 .username("")
@@ -76,10 +76,11 @@ public class CommentController {
      * @param placeId
      * @return
      */
+
     @RequestMapping(value = "/comments/{placeid}", method = RequestMethod.GET)
     public ResponseEntity<List<Comment>> get(@PathVariable("placeid") String placeId){
         List<Comment> listComment = commentDAL.getAllCommentById(placeId);
         return ResponseEntity.ok().body(listComment);
     }
-
 }
+

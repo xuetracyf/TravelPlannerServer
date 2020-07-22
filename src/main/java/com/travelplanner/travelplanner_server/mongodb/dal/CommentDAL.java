@@ -1,17 +1,19 @@
 package com.travelplanner.travelplanner_server.mongodb.dal;
 
 import com.travelplanner.travelplanner_server.model.Comment;
+import com.travelplanner.travelplanner_server.model.Place;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@AllArgsConstructor
 @Repository
+@AllArgsConstructor
 public class CommentDAL {
 
     @Autowired

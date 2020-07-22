@@ -1,6 +1,7 @@
 package com.travelplanner.travelplanner_server.mongodb.dal;
 
 import com.google.maps.model.LatLng;
+import com.travelplanner.travelplanner_server.model.Comment;
 import com.travelplanner.travelplanner_server.model.Place;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

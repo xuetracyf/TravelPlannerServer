@@ -40,7 +40,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.badRequest().body(new ErrorResponse(ex.getMessage()));
     }
 
-
     @ExceptionHandler(InvalidPlaceIdException.class)
     public ResponseEntity<ErrorResponse> InvalidPlaceIdHandler(Exception ex, WebRequest request) {
         return ResponseEntity.badRequest().body(new ErrorResponse(ex.getMessage()));
