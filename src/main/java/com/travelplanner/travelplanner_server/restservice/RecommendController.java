@@ -23,8 +23,8 @@ public class RecommendController {
     private final GoogleDistanceClient googleDistanceClient;
 
     @Autowired
-    public RecommendController(TSPService service) {
-        this.googleDistanceClient = new GoogleDistanceClient();
+    public RecommendController(TSPService service, GoogleDistanceClient googleDistanceClient) {
+        this.googleDistanceClient = googleDistanceClient;
         this.service = service;
     }
 

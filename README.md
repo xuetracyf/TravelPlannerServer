@@ -23,11 +23,14 @@ After that, install Lombok plugin:
 3. Search for Lombok and click Install button
 4. Restart your Intellij
 
-# Add Google Map API Key into your Environment variable
+# Add Google Map API Key into your local application.property file
 1. Get a Google Map API key: https://developers.google.com/maps/documentation/javascript/get-api-key
-2. Create a folder named "config" under your project root directory
+2. Create a directory named "config" under your project root directory
 3. Create an application.property file under config folder
-4. Add: "google.map.api.key={your Google Map Api Key}" (Don't include the quote)
+4. Add: "google.map.api.key={your Google Map Api Key}" (Don't include the quote) in your properties
+
+# Configure your new property file in intellij
+Follow official tutorial: https://www.jetbrains.com/help/idea/spring-boot.html#custom-configuration-files
 
 # run in your local machine
 1. First of all, run your local mongo database in default setting(localhost: 27017). Please refer to previous link guide to run your database: https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installation-tutorials

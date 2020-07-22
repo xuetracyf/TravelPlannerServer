@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.maps.FindPlaceFromTextRequest.InputType;
 import com.google.maps.FindPlaceFromTextRequest.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -35,8 +36,6 @@ public class GooglePlaceClient {
 
     private GeoApiContext context;
     private int time_limit_in_milli;
-    @Value("${google.map.api.key")
-    private String API_KEY;
 
     private static final String city_places_template = "tourist+attraction+in+";
     private static final String range_places_template = "tourist+attraction+near+";
@@ -52,15 +51,14 @@ public class GooglePlaceClient {
      * int time_limit_in_milli:             Upper bound of time cost of each function call in this class.
      *
      * */
-
-    public GooglePlaceClient(int connect_timeout_in_milli, int retry_timeout_in_milli, int time_limit_in_milli) {
-        this.time_limit_in_milli = time_limit_in_milli;
-        this.context = new GeoApiContext.Builder()
-                .apiKey(API_KEY)
-                .connectTimeout(connect_timeout_in_milli, TimeUnit.MILLISECONDS)
-                .retryTimeout(retry_timeout_in_milli, TimeUnit.MILLISECONDS)
-                .build();
-    }
+//    public GooglePlaceClient(int connect_timeout_in_milli, int retry_timeout_in_milli, int time_limit_in_milli) {
+//        this.time_limit_in_milli = time_limit_in_milli;
+//        this.context = new GeoApiContext.Builder()
+//                .apiKey(API_KEY)
+//                .connectTimeout(connect_timeout_in_milli, TimeUnit.MILLISECONDS)
+//                .retryTimeout(retry_timeout_in_milli, TimeUnit.MILLISECONDS)
+//                .build();
+//    }
 
     /*
      * Constructor:
@@ -68,7 +66,7 @@ public class GooglePlaceClient {
      * String MY_API_KEY:                   API KEY provided by google cloud.
      *
      * */
-    public GooglePlaceClient() {
+    public GooglePlaceClient(@Value("${google.map.api.key}") String API_KEY) {
         this.context = new GeoApiContext.Builder()
                 .apiKey(API_KEY)
                 .build();
@@ -491,63 +489,63 @@ public class GooglePlaceClient {
     /*
      * temp tests
      * */
-    public static void main(String[] args) {
-        System.out.println("start");
-        test1();
-        System.out.println("end1");
-        test2();
-        System.out.println("end2");
-        test3();
-        System.out.println("end3");
-        test4();
-        System.out.println("end4");
-        test5();
-        System.out.println("end5");
-        test6();
-        System.out.println("end6");
-    }
-
-    public static void test1() {
-        GooglePlaceClient client = new GooglePlaceClient(2000,2000, 4000);
-        LatLng center = new LatLng(37.771212, -122.432810);
-        FindPlaceFromTextRequest.LocationBiasCircular circle_area = new FindPlaceFromTextRequest.LocationBiasCircular(center, 30000);
-        List<Place> list1 = client.getPlaceFromTextSearch("pier 39", 1, false, circle_area);
-        PrintPlacesDetails(list1);
-    }
-
-    public static void test2() {
-        GooglePlaceClient client = new GooglePlaceClient(2000,2000, 4000);
-        LatLng center = new LatLng(37.771212, -122.432810);
-        List<Place> list1 = client.getPlacesFromNearbySearchrequests(center, 200000, 10);
-        PrintPlacesDetails(list1);
-    }
-
-    public static void test3() {
-        GooglePlaceClient client = new GooglePlaceClient(2000,2000, 4000);
-        String city_name = "San Francisco";
-        List<Place> list1 = client.getPlacesFromTextSearchQuery(city_places_template + city_name, 50);
-        PrintPlacesDetails(list1);
-    }
-
-    public static void test4() {
-        GooglePlaceClient client = new GooglePlaceClient(2000,2000, 4000);
-        String site = "Pier 39";
-        List<Place> list1 = client.getPlacesFromTextSearchQuery(range_places_template + site, 5);
-        PrintPlacesDetails(list1);
-    }
-
-    public static void test5() {
-        GooglePlaceClient client = new GooglePlaceClient(2000,2000, 4000);
-        String city_name = "San Francisco";
-        List<Place> list = client.getCityPlacesInCircle(city_name, 3, 50000);
-        PrintPlacesDetails(list);
-    }
-
-    public static void test6() {
-        GooglePlaceClient client = new GooglePlaceClient(2000,2000, 4000);
-        String city_name = "San Francisco";
-        List<Place> list = client.getCityPlacesInRect(city_name, 4, 37.785063, -122.467674, 37.754999, -122.395695);
-        PrintPlacesDetails(list);
-    }
+//    public static void main(String[] args) {
+//        System.out.println("start");
+//        test1();
+//        System.out.println("end1");
+//        test2();
+//        System.out.println("end2");
+//        test3();
+//        System.out.println("end3");
+//        test4();
+//        System.out.println("end4");
+//        test5();
+//        System.out.println("end5");
+//        test6();
+//        System.out.println("end6");
+//    }
+//
+//    public static void test1() {
+//        GooglePlaceClient client = new GooglePlaceClient();
+//        LatLng center = new LatLng(37.771212, -122.432810);
+//        FindPlaceFromTextRequest.LocationBiasCircular circle_area = new FindPlaceFromTextRequest.LocationBiasCircular(center, 30000);
+//        List<Place> list1 = client.getPlaceFromTextSearch("pier 39", 1, false, circle_area);
+//        PrintPlacesDetails(list1);
+//    }
+//
+//    public static void test2() {
+//        GooglePlaceClient client = new GooglePlaceClient(2000,2000, 4000);
+//        LatLng center = new LatLng(37.771212, -122.432810);
+//        List<Place> list1 = client.getPlacesFromNearbySearchrequests(center, 200000, 10);
+//        PrintPlacesDetails(list1);
+//    }
+//
+//    public static void test3() {
+//        GooglePlaceClient client = new GooglePlaceClient(2000,2000, 4000);
+//        String city_name = "San Francisco";
+//        List<Place> list1 = client.getPlacesFromTextSearchQuery(city_places_template + city_name, 50);
+//        PrintPlacesDetails(list1);
+//    }
+//
+//    public static void test4() {
+//        GooglePlaceClient client = new GooglePlaceClient(2000,2000, 4000);
+//        String site = "Pier 39";
+//        List<Place> list1 = client.getPlacesFromTextSearchQuery(range_places_template + site, 5);
+//        PrintPlacesDetails(list1);
+//    }
+//
+//    public static void test5() {
+//        GooglePlaceClient client = new GooglePlaceClient(2000,2000, 4000);
+//        String city_name = "San Francisco";
+//        List<Place> list = client.getCityPlacesInCircle(city_name, 3, 50000);
+//        PrintPlacesDetails(list);
+//    }
+//
+//    public static void test6() {
+//        GooglePlaceClient client = new GooglePlaceClient(2000,2000, 4000);
+//        String city_name = "San Francisco";
+//        List<Place> list = client.getCityPlacesInRect(city_name, 4, 37.785063, -122.467674, 37.754999, -122.395695);
+//        PrintPlacesDetails(list);
+//    }
 
 }
