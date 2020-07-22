@@ -23,6 +23,12 @@ After that, install Lombok plugin:
 3. Search for Lombok and click Install button
 4. Restart your Intellij
 
-# run
+# Add Google Map API Key into your Environment variable
+1. Get a Google Map API key: https://developers.google.com/maps/documentation/javascript/get-api-key
+2. Create a folder named "config" under your project root directory
+3. Create an application.property file under config folder
+4. Add: "google.map.api.key={your Google Map Api Key}" (Don't include the quote)
+
+# run in your local machine
 1. First of all, run your local mongo database in default setting(localhost: 27017). Please refer to previous link guide to run your database: https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installation-tutorials
-2. Run SpringBoot Application by right click TravelplannerServerApplication file under src/main/java folder. Select "Run TravelplannerServerAppliction".
+2. You can run through your IDE or in your terminal: mvn spring-boot:run

@@ -13,7 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.travelplanner.travelplanner_server.model.services.JwtUserDetailsService;
+import com.travelplanner.travelplanner_server.services.JwtUserDetailsService;
 
 // This class allows customization to both Websecurity and HttpSecurity
 @Configuration

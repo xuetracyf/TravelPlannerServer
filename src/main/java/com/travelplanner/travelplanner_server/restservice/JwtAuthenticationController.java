@@ -1,7 +1,6 @@
 package com.travelplanner.travelplanner_server.restservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import com.travelplanner.travelplanner_server.model.services.JwtUserDetailsService;
+import com.travelplanner.travelplanner_server.services.JwtUserDetailsService;
 import com.travelplanner.travelplanner_server.restservice.config.JwtTokenUtil;
 import com.travelplanner.travelplanner_server.restservice.payload.JwtRequest;
 import com.travelplanner.travelplanner_server.restservice.payload.JwtResponse;

@@ -1,4 +1,4 @@
-package com.travelplanner.travelplanner_server.model.validator;
+package com.travelplanner.travelplanner_server.validator;
 
 import com.travelplanner.travelplanner_server.model.User;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,9 @@ import java.util.regex.Pattern;
 @Component
 public class UserValidator implements Validator {
     // simple regular expression: https://projects.lukehaas.me/regexhub/
+
     private static final String USERNAME_PATTERN = "^[a-zA-Z0-9_-]{3,16}$";
+
     //1
     @Override
     public boolean supports(Class<?> clazz){
@@ -40,7 +42,7 @@ public class UserValidator implements Validator {
             errors.rejectValue("passwordConfirmation", null, "Password and PasswordConfirmation must match!!!");
         }
 
-        // for user_name
+//         for user_name
         Pattern username_pattern = Pattern.compile(this.USERNAME_PATTERN);
         System.out.println(username_pattern.matcher(user.getUsername()).matches());
         if(!username_pattern.matcher(user.getUsername()).matches()){

@@ -1,4 +1,4 @@
-package com.travelplanner.travelplanner_server.model.services;
+package com.travelplanner.travelplanner_server.services;
 
 import com.travelplanner.travelplanner_server.model.User;
 import org.mindrot.jbcrypt.BCrypt;
