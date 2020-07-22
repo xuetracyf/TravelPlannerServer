@@ -1,16 +1,22 @@
 package com.travelplanner.travelplanner_server.restservice;
 
 import com.travelplanner.travelplanner_server.exception.EmptyCommentException;
+import com.travelplanner.travelplanner_server.exception.InvalidCommentIdException;
+import com.travelplanner.travelplanner_server.exception.InvalidPlaceIdException;
 import com.travelplanner.travelplanner_server.model.Comment;
 import com.travelplanner.travelplanner_server.mongodb.dal.CommentDAL;
+import com.travelplanner.travelplanner_server.mongodb.dal.PlaceDAL;
 import com.travelplanner.travelplanner_server.mongodb.dal.UserDAL;
 import com.travelplanner.travelplanner_server.restservice.payload.CommentRequest;
 import com.travelplanner.travelplanner_server.restservice.payload.CommentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 
 @RestController
@@ -21,32 +27,26 @@ public class CommentController {
     private CommentDAL commentDAL;
     @Autowired
     private UserDAL userDAL;
-
-
+    @Autowired
+    private  PlaceDAL placeDAL;
 
     /**
-     * Create a new user comment
-     * @param commentRequest
-     * JSON example:
-     * Request:
-     * {
-     *   "username": "testUser",
-     *   "place_id": "ChIJE9on3F3HwoAR9AhGJW_fL-I",
-     *   "content": "It's a great place. I've been there many times."
-     * }
-     * Response:
-     * 200
+     * Create a new user comment.
+     * @param placeId url
+     * @param commentRequest body
+     * @return comment_id of current comment
      */
-    @RequestMapping(value="/comment", method=RequestMethod.POST)
-    public ResponseEntity<CommentResponse> post(@RequestBody CommentRequest commentRequest) {
-
+    @RequestMapping(value="/comment/{placeid}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CommentResponse> post(@PathVariable("placeid") String placeId, @RequestBody CommentRequest commentRequest) {
+        if (placeId == null || !placeDAL.hasPlace(placeId)) {
+            throw new InvalidPlaceIdException();
+        }
         if (commentRequest.getContent() == null || commentRequest.getContent().length() == 0) {
             throw new EmptyCommentException();
         }
-
         Comment comment = Comment.builder()
+                .place_id(placeId)
                 .username(commentRequest.getUsername())
-                .place_id(commentRequest.getPlace_id())
                 .content(commentRequest.getContent())
                 .createTime("dateCreated")
                 .build();
@@ -57,23 +57,31 @@ public class CommentController {
     }
 
     /**
-     * Delete an user comment.
-     * @param commentRequest
-     * JSON example:
-     * Request:
-     * {
-     *   "comment_id": "0"
-     * }
-     * Response:
-     * 200
+     * Delete a specified comment from a specified place.
+     * @param placeId place_id
+     * @param commentId comment_id
      */
-    @RequestMapping(value="/comment", method=RequestMethod.DELETE)
-    public void delete(@RequestBody CommentRequest commentRequest) {
-        try {
-            commentDAL.deleteComment(commentRequest.getComment_id());
-        } catch (EmptyCommentException emptyCommentException) {
-            throw emptyCommentException;
+    @RequestMapping(value="/comment/{place_id}/{comment_id}", method=RequestMethod.DELETE)
+    public void delete(@PathVariable("place_id") String placeId, @PathVariable("comment_id") String commentId) {
+
+        if (placeId == null || !placeDAL.hasPlace(placeId)) {
+            throw new InvalidPlaceIdException();
         }
+        if (commentId == null || !commentDAL.hasComment(commentId)) {
+            throw new InvalidCommentIdException();
+        }
+        commentDAL.deleteComment(placeId, commentId);
     }
 
+    /**
+     * Get all comments
+     * @param placeId
+     * @return
+     */
+    @RequestMapping(value="/comments/{placeid}", method=RequestMethod.GET)
+    public ResponseEntity<List<Comment>> get(@PathVariable("placeid") String placeId) {
+        List<Comment> listComment = commentDAL.getAllCommentById(placeId);
+        return ResponseEntity.ok().body(listComment);
+    }
 }
+

@@ -21,7 +21,7 @@ public class Place {
     private String name;
     private String description;
     private List<Comment> allComments;
-    private String content;
+    private int likes;
     private String createTime;
 
     @Override

@@ -4,6 +4,7 @@ import com.travelplanner.travelplanner_server.exception.DuplicateUserException;
 import com.travelplanner.travelplanner_server.exception.EmptyCommentException;
 import com.travelplanner.travelplanner_server.exception.FailedAuthenticationException;
 import com.travelplanner.travelplanner_server.exception.InvalidTokenException;
+import com.travelplanner.travelplanner_server.exception.*;
 import com.travelplanner.travelplanner_server.restservice.payload.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -39,4 +40,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.badRequest().body(new ErrorResponse(ex.getMessage()));
     }
 
+    @ExceptionHandler(InvalidPlaceIdException.class)
+    public ResponseEntity<ErrorResponse> InvalidPlaceIdHandler(Exception ex, WebRequest request) {
+        return ResponseEntity.badRequest().body(new ErrorResponse(ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidCommentIdException.class)
+    public ResponseEntity<ErrorResponse> InvalidCommentIdHandler(Exception ex, WebRequest request) {
+        return ResponseEntity.badRequest().body(new ErrorResponse(ex.getMessage()));
+    }
 }

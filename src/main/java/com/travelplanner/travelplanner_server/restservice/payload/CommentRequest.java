@@ -8,9 +8,12 @@ import java.io.Serializable;
 public class CommentRequest implements Serializable {
 
     private String username;
-    private String place_id;
     private String content;
+<<<<<<< HEAD
     private String comment_id;
+=======
+
+>>>>>>> f3b9dfb... place without map api
 }
 
 
