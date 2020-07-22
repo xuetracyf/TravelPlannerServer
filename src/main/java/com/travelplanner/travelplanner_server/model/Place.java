@@ -1,12 +1,12 @@
 package com.travelplanner.travelplanner_server.model;
 
-
 import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.model.LatLng;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Value;
+import java.util.Date;
 
 @Value
 @Builder
@@ -20,9 +20,8 @@ public class Place {
     private String place_id;
     private String name;
     private String description;
-    private List<Comment> allComments;
     private int likes;
-    private String createTime;
+    private Date createTime;
 
     @Override
     public boolean equals(Object obj) {

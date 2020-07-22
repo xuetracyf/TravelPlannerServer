@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.mongodb.core.query.Query;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -40,15 +41,13 @@ public class PlaceDAL {
      * @return a place object that has been stored in db
      */
     private Place createPlace(String placeId) {
-        List<Comment> comments = commentDAL.getAllCommentById(placeId);
         Place place = Place.builder()
                 .place_id(placeId)
                 .name("SF")
                 .photo_refs(null)
                 .description("description")
-                .allComments(comments)
                 .likes(10)
-                .createTime("time")
+                .createTime(new Date())
                 .build();
         return mongoTemplate.insert(place);
     }
