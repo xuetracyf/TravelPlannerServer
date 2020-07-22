@@ -3,6 +3,7 @@ package com.travelplanner.travelplanner_server.model;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Document(collection="user")
 @Getter
@@ -28,7 +30,9 @@ public class User implements UserDetails {
     private String firstname;
     private String lastname;
     private String email;
-    private String profileUrl;
+    private String profileUrlId;
+    @DBRef
+    private List<String> plans;
 
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date createdAt;
@@ -36,14 +40,14 @@ public class User implements UserDetails {
     private Date updatedAt;
 
     // constructor
-    public User(String username, String password, String passwordConfirmation, String firstname, String lastname, String email, String profileUrl){
+    public User(String username, String password, String passwordConfirmation, String firstname, String lastname, String email, String profileUrlId){
         this.username = username;
         this.password = password;
         this.passwordConfirmation = passwordConfirmation;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
-        this.profileUrl = profileUrl;
+        this.profileUrlId = profileUrlId;
     }
 
     @Override

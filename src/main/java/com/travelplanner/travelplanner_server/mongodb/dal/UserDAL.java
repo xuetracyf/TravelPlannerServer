@@ -26,6 +26,13 @@ public class UserDAL {
         return mongoTemplate.insert(user);
     }
 
+    public String findIdByUsername(String username){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("username").is(username));
+        User user = mongoTemplate.findOne(query, User.class);
+        return user.getId();
+    }
+
     public User findUserByUsername(String username) {
         Query query = new Query();
         query.addCriteria(Criteria.where("username").is(username));
