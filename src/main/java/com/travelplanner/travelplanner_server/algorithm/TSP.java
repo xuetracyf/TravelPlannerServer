@@ -16,7 +16,7 @@ public class TSP {
      *      C(S, i) = min { C(S-{i}, j) + dis(j, i)} where j belongs to S, j != i and j != 1.
      *
      * reference: https://www.geeksforgeeks.org/travelling-salesman-problem-set-1/?ref=rp
-     * Time: O(n^2*2^n)
+     * Time: O(n^2*2^n) while native-permutation-solution:Θ(n!) = O(log(n^n))
      */
     public static RouteCost findShortestPath(ValueGraph<String, Long> distGraph) {
         Set<String> nodes = new HashSet<>(distGraph.nodes());

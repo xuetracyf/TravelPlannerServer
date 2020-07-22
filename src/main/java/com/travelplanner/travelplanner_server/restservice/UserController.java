@@ -87,12 +87,8 @@ public class UserController {
     public String noneauthentication(){
         return "No Need authentication works!";
     }
-//    @RequestMapping(value="/logouttt", method=RequestMethod.GET)
-//    public String logouttt(){
-//        return "We logged-outttt already!";
-//    }
 
-    @RequestMapping(value = "/login", method=RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/signin", method=RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest jwtRequest) {
         User user = userDAL.findUserByUsername(jwtRequest.getUsername());
         // Handle case where user is not exist or password is different.
@@ -118,6 +114,6 @@ public class UserController {
             tokenDAL.createUsedToken(usedToken);
             System.out.println("Successfully Blocked token: " + token);
         }
-        return ResponseEntity.ok(new JwtResponse("Successfully Logout"));
+        return ResponseEntity.ok(new JwtResponse("Successfully Signout"));
     }
 }
