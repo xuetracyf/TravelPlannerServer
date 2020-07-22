@@ -30,6 +30,8 @@ Get a Google Map API key: https://developers.google.com/maps/documentation/javas
 # Add your Google Map API Key as an environment variable in your run configuration in intellij
 Follow official tutorial: https://www.jetbrains.com/help/objc/add-environment-variables-and-program-arguments.html#add-environment-variables
 
+Add "GOOGLE_MAP_API_KEY:{your google map API key}"
+
 # run in your local machine
 1. First of all, run your local mongo database in default setting(localhost: 27017). Please refer to previous link guide to run your database: https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installation-tutorials
 2. You can run through your IDE (should add your google map api key as environment variable)
