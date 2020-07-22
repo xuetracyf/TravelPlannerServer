@@ -21,6 +21,7 @@ public class DistanceAPI {
     // Canada Place: ChIJIeDiJJ1xhlQRCWHIheB_Bbc
     // Museum of Vancouver: ChIJHZSzNzNyhlQRzmus61cqE5Y
 
+    // DistanceMatrixApi: https://www.javadoc.io/doc/com.google.maps/google-maps-services/latest/com/google/maps/DistanceMatrixApi.html
     // Google Graph: https://github.com/google/guava/wiki/GraphsExplained
     private static final GeoApiContext context = Context.getContext();
 

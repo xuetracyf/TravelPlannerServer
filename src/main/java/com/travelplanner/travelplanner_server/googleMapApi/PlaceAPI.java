@@ -10,6 +10,8 @@ import com.travelplanner.travelplanner_server.model.Place;
 import java.util.ArrayList;
 import java.util.List;
 
+// Google Map API documentation: https://www.javadoc.io/doc/com.google.maps/google-maps-services/latest/index.html
+
 public class PlaceAPI {
 
     private static final GeoApiContext context = Context.getContext();
@@ -28,6 +30,6 @@ public class PlaceAPI {
         // Convert res to any data model you want. e.g. List<Place>
         return new ArrayList<Place>();
     }
-
-
 }
+
+
