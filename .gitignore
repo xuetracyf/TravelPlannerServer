@@ -5,6 +5,8 @@ target/
 !**/src/test/**/target/
 
 /config/
+.env
+credential.env
 
 ### STS ###
 .apt_generated
