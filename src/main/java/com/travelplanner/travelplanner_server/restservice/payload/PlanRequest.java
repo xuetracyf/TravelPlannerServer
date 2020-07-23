@@ -10,5 +10,4 @@ import java.util.List;
 public class PlanRequest {
     private String name;
     private List<String> place_id;
-    private String user_id;
 }

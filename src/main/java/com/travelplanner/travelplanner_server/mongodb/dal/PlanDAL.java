@@ -1,6 +1,7 @@
 package com.travelplanner.travelplanner_server.mongodb.dal;
 
 import com.travelplanner.travelplanner_server.model.Plan;
+import com.travelplanner.travelplanner_server.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -38,15 +39,15 @@ public class PlanDAL {
         mongoTemplate.remove(query,Plan.class);
     }
 
-    public List<Plan> findPlansByUserId(String user_id) {
+    public List<Plan> findPlansByUser(User user) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("user_id").is(user_id));
+        query.addCriteria(Criteria.where("user").is(user));
         return mongoTemplate.find(query,Plan.class);
     }
 
-    public Plan findPlanByUserIdAndName(String user_id, String name) {
+    public Plan findPlanByUserAndName(User user, String name) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("user_id").is(user_id).and("name").is(name));
+        query.addCriteria(Criteria.where("user").is(user).and("name").is(name));
         return mongoTemplate.findOne(query,Plan.class);
     }
 

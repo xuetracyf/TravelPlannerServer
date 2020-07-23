@@ -31,6 +31,7 @@ public class User implements UserDetails {
     private String lastname;
     private String email;
     private String profileUrlId;
+
     @DBRef
     private List<String> plans;
 

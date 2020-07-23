@@ -1,11 +1,11 @@
 package com.travelplanner.travelplanner_server.restservice;
 
 import com.travelplanner.travelplanner_server.model.Plan;
+import com.travelplanner.travelplanner_server.model.User;
 import com.travelplanner.travelplanner_server.mongodb.dal.PlanDAL;
-import com.travelplanner.travelplanner_server.restservice.payload.GetPlanResponse;
-import com.travelplanner.travelplanner_server.restservice.payload.PlanRequest;
-import com.travelplanner.travelplanner_server.restservice.payload.PlanResponse;
-import com.travelplanner.travelplanner_server.restservice.payload.PlansData;
+import com.travelplanner.travelplanner_server.mongodb.dal.UserDAL;
+import com.travelplanner.travelplanner_server.restservice.config.JwtTokenUtil;
+import com.travelplanner.travelplanner_server.restservice.payload.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,21 +14,30 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
 @RestController
 public class PlanController {
-    private final PlanDAL planDAL;
-
     @Autowired
-    public PlanController(PlanDAL planDAL) {
-        this.planDAL = planDAL;
-    }
+    private PlanDAL planDAL;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private UserDAL userDAL;
+
 
     @PutMapping(value = "/plan",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Plan> updatePlan(@RequestBody PlanRequest planRequest) {
-        Plan plan = planDAL.findPlanByUserIdAndName(planRequest.getUser_id(),planRequest.getName());
+    public ResponseEntity<Plan> updatePlan(@RequestBody PlanRequest planRequest,HttpServletRequest request) {
+        String token = null;
+        String requestTokenHeader = request.getHeader("Authorization");
+        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+            token = requestTokenHeader.substring(7);
+        }
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        User user = userDAL.findUserByUsername(username);
+        Plan plan = planDAL.findPlanByUserAndName(user,planRequest.getName());
         if (plan != null) {
             planDAL.updatePlan(plan,planRequest.getPlace_id(),new Date());
             plan.setPlace_id(planRequest.getPlace_id());
@@ -41,7 +50,7 @@ public class PlanController {
                     .place_id(planRequest.getPlace_id())
                     .updatedAt(new Date())
                     .createdAt(new Date())
-                    .user_id(planRequest.getUser_id())
+                    .user(user)
                     .build();
             planDAL.createPlan(plan);
         }
@@ -50,8 +59,15 @@ public class PlanController {
     }
 
     @GetMapping(value = "/plans",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GetPlanResponse> getPlan() {
-        List<Plan> planList = planDAL.findPlansByUserId("asd111");
+    public ResponseEntity<GetPlanResponse> getPlan(HttpServletRequest request) {
+        String token = null;
+        String requestTokenHeader = request.getHeader("Authorization");
+        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+            token = requestTokenHeader.substring(7);
+        }
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        User user = userDAL.findUserByUsername(username);
+        List<Plan> planList = planDAL.findPlansByUser(user);
         GetPlanResponse getPlanResponse = new GetPlanResponse("ok",new PlansData(planList));
         return ResponseEntity.ok().body(getPlanResponse);
     }

@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -18,7 +19,8 @@ import java.util.List;
 public class Plan {
     @Id
     private String id;
-    private String user_id;
+    @DBRef
+    private User user;
     private List<String> place_id;
     private String name;
     private Date createdAt;
