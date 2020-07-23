@@ -46,6 +46,7 @@ public class PlaceController {
         PlaceResponse placeResponse = PlaceResponse.builder()
                 .place_id(placeId)
                 .name(place.getName())
+                .location(place.getLocation())
                 .description(place.getDescription())
                 .photo_reference(place.getPhoto_refs())
                 .likes(place.getLikes())

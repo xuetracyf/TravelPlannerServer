@@ -1,6 +1,6 @@
 package com.travelplanner.travelplanner_server.mongodb.dal;
 
-import com.travelplanner.travelplanner_server.model.Comment;
+import com.google.maps.model.LatLng;
 import com.travelplanner.travelplanner_server.model.Place;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +44,7 @@ public class PlaceDAL {
         Place place = Place.builder()
                 .place_id(placeId)
                 .name("SF")
+                .location(new LatLng())
                 .photo_refs(null)
                 .description("description")
                 .likes(10)

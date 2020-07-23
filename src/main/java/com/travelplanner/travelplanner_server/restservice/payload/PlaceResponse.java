@@ -1,5 +1,6 @@
 package com.travelplanner.travelplanner_server.restservice.payload;
 
+import com.google.maps.model.LatLng;
 import com.travelplanner.travelplanner_server.model.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,7 @@ import java.util.List;
 public class PlaceResponse {
     private String place_id;
     private String name;
+    private LatLng location;
     private List<String> photo_reference;
     private String description;
     private int likes;
