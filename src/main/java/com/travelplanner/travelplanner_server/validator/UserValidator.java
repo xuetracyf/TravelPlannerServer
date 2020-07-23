@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 @Component
 public class UserValidator implements Validator {
     // simple regular expression: https://projects.lukehaas.me/regexhub/
-    private static final String USERNAME_PATTERN = "^[a-zA-Z0-9_-]{3,16}$";
+    // private static final String USERNAME_PATTERN = "^[a-zA-Z0-9_-]{3,16}$";
 
     //1
     @Override

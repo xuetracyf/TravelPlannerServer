@@ -246,7 +246,7 @@ public class GooglePlaceClient {
                     Place new_place = Place.builder()
                             .name(new_place_result.name)
                             .total_rating(new_place_result.userRatingsTotal)
-                            .place_id(new_place_result.placeId)
+                            .id(new_place_result.placeId)
                             .photo_refs(getPhotoRefsFromResult(new_place_result))
                             .location(new_place_result.geometry.location)
                             .build();
@@ -298,7 +298,7 @@ public class GooglePlaceClient {
                     Place new_place = Place.builder()
                             .name(new_place_result.name)
                             .total_rating(new_place_result.userRatingsTotal)
-                            .place_id(new_place_result.placeId)
+                            .id(new_place_result.placeId)
                             .photo_refs(getPhotoRefsFromResult(new_place_result))
                             .location(new_place_result.geometry.location)
                             .build();
@@ -347,7 +347,7 @@ public class GooglePlaceClient {
                     Place new_place = Place.builder()
                             .name(new_place_result.name)
                             .total_rating(new_place_result.userRatingsTotal)
-                            .place_id(new_place_result.placeId)
+                            .id(new_place_result.placeId)
                             .photo_refs(getPhotoRefsFromResult(new_place_result))
                             .location(new_place_result.geometry.location)
                             .build();
@@ -391,7 +391,7 @@ public class GooglePlaceClient {
                     Place new_place = Place.builder()
                             .name(new_place_result.name)
                             .total_rating(new_place_result.userRatingsTotal)
-                            .place_id(new_place_result.placeId)
+                            .id(new_place_result.placeId)
                             .photo_refs(getPhotoRefsFromResult(new_place_result))
                             .location(new_place_result.geometry.location)
                             .build();
@@ -431,7 +431,7 @@ public class GooglePlaceClient {
 
         Place result_place = Place.builder()
                 .name(details.name)
-                .place_id(place_id)
+                .id(place_id)
                 .location(details.geometry.location)
                 .photo_refs(getPhotoRefsFromResult(details))
                 .total_rating(details.userRatingsTotal)
@@ -473,7 +473,7 @@ public class GooglePlaceClient {
     public static void PrintPlaceDetails(Place place) {
         System.out.println("------------------");
         System.out.println("name: " + place.getName());
-        System.out.println("placeid: " + place.getPlace_id());
+        System.out.println("placeid: " + place.getId());
         System.out.println("total rating: " + place.getTotal_rating());
         System.out.println("location: " + place.getLocation().lat + place.getLocation().lng);
         //System.out.println(place.getPhoto_refs());

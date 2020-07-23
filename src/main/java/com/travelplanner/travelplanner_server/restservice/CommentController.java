@@ -1,6 +1,5 @@
 package com.travelplanner.travelplanner_server.restservice;
 
-import com.travelplanner.travelplanner_server.exception.EmptyCommentException;
 import com.travelplanner.travelplanner_server.exception.InvalidCommentIdException;
 import com.travelplanner.travelplanner_server.exception.InvalidPlaceIdException;
 import com.travelplanner.travelplanner_server.model.Comment;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -42,10 +42,9 @@ public class CommentController {
         }
         Comment comment = Comment.builder()
                 .place_id(placeId)
-                .username("")
-                .content("commentRequest.getContent()")
-                .id("10")
-                .createTime("dateCreated")
+                .username(commentRequest.getUsername())
+                .content(commentRequest.getContent())
+                .createTime(new Date())
                 .build();
         comment = commentDAL.createComment(comment);
         CommentResponse commentResponse = new CommentResponse(comment.getId());
@@ -55,20 +54,15 @@ public class CommentController {
 
     /**
      * Delete a specified comment from a specified place.
-     * @param placeId place_id
      * @param commentId comment_id
      */
-    @RequestMapping(value = "/comment/{place_id}/{comment_id}", method = RequestMethod.DELETE)
-    public void delete (@PathVariable("place_id") String placeId, @PathVariable("comment_id") String commentId){
+    @RequestMapping(value = "/comment/{comment_id}", method = RequestMethod.DELETE)
+    public void delete (@PathVariable("comment_id") String commentId){
 
-        if (placeId == null || !placeDAL.hasPlace(placeId)) {
-            throw new InvalidPlaceIdException();
-        }
         if (commentId == null || !commentDAL.hasComment(commentId)) {
             throw new InvalidCommentIdException();
-
         }
-        commentDAL.deleteComment(placeId, commentId);
+        commentDAL.deleteComment(commentId);
     }
 
     /**
@@ -76,11 +70,9 @@ public class CommentController {
      * @param placeId
      * @return
      */
-
     @RequestMapping(value = "/comments/{placeid}", method = RequestMethod.GET)
     public ResponseEntity<List<Comment>> get(@PathVariable("placeid") String placeId){
         List<Comment> listComment = commentDAL.getAllCommentById(placeId);
         return ResponseEntity.ok().body(listComment);
     }
 }
-

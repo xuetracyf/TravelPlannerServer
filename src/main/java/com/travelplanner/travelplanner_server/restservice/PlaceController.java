@@ -1,9 +1,7 @@
 package com.travelplanner.travelplanner_server.restservice;
 
-import com.travelplanner.travelplanner_server.restservice.payload.PlaceDetailResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import com.travelplanner.travelplanner_server.exception.InvalidPlaceIdException;

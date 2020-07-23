@@ -37,14 +37,12 @@ public class CommentDAL {
 //        mongoTemplate.findAndModify(query, update, Place.class);
 
     /**
-     * @param place_id
      * @param comment_id
      * @return
      */
-    public void deleteComment(String place_id, String comment_id) {
+    public void deleteComment(String comment_id) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("place_id").is(place_id));
-        query.addCriteria(Criteria.where("comment_id").is(comment_id));
+        query.addCriteria(Criteria.where("id").is(comment_id));
         mongoTemplate.findAndRemove(query, Comment.class);
     }
 
@@ -55,7 +53,7 @@ public class CommentDAL {
      */
     public Comment getComment(String id) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("comment_id").is(id));
+        query.addCriteria(Criteria.where("id").is(id));
         return mongoTemplate.findOne(query, Comment.class);
     }
 
@@ -77,7 +75,7 @@ public class CommentDAL {
      */
     public boolean hasComment(String commentId) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("comment_id").is(commentId));
+        query.addCriteria(Criteria.where("id").is(commentId));
         return mongoTemplate.exists(query, Comment.class);
     }
 }

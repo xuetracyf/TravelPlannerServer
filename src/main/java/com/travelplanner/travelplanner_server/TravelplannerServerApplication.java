@@ -10,7 +10,7 @@ import org.springframework.cache.annotation.EnableCaching;
 public class TravelplannerServerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TravelplannerServerApplication.class, args);
+		SpringApplication. run(TravelplannerServerApplication.class, args);
 	}
 
 }

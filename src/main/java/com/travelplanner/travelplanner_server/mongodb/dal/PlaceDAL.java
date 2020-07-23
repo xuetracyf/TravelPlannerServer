@@ -1,7 +1,6 @@
 package com.travelplanner.travelplanner_server.mongodb.dal;
 
 import com.google.maps.model.LatLng;
-import com.travelplanner.travelplanner_server.model.Comment;
 import com.travelplanner.travelplanner_server.model.Place;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ public class PlaceDAL {
     public Place getSinglePlace(String placeId, int maxWidth) {
         if (hasPlace(placeId)) {
             Query query = new Query();
-            query.addCriteria(Criteria.where("place_id").is(placeId));
+            query.addCriteria(Criteria.where("id").is(placeId));
             return mongoTemplate.findOne(query, Place.class);
         }
         return createPlace(placeId);
@@ -43,7 +42,7 @@ public class PlaceDAL {
      */
     private Place createPlace(String placeId) {
         Place place = Place.builder()
-                .place_id(placeId)
+                .id(placeId)
                 .name("SF")
                 .location(new LatLng())
                 .photo_refs(null)
@@ -60,7 +59,7 @@ public class PlaceDAL {
      */
     public boolean hasPlace(String placeId) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("place_id").is(placeId));
+        query.addCriteria(Criteria.where("id").is(placeId));
         return mongoTemplate.exists(query, Place.class);
     }
 

@@ -6,6 +6,8 @@ import com.google.maps.model.LatLng;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Value;
+import org.springframework.data.annotation.Id;
+
 import java.util.Date;
 
 @Value
@@ -16,8 +18,8 @@ public class Place {
     private LatLng location; //com.google.maps.model.LatLng;
     private int total_rating;
     private List<String> photo_refs;
-
-    private String place_id;
+    @Id
+    private String id;
     private String name;
     private String description;
     private int likes;
@@ -33,12 +35,12 @@ public class Place {
             return true;
         }
 
-        return this.place_id.equals(((Place) obj).place_id);
+        return this.id.equals(((Place) obj).id);
     }
 
     @Override
     public int hashCode() {
-        return place_id.hashCode();
+        return id.hashCode();
     }
 
     /*
@@ -71,7 +73,7 @@ public class Place {
     }
 
     public static void main(String[] args) {
-        Place p = new PlaceBuilder().name("111").place_id("123").build();
+        Place p = new PlaceBuilder().name("111").id("123").build();
         ObjectMapper mapper = new ObjectMapper();
         try {
             System.out.println(mapper.writeValueAsString(p));
