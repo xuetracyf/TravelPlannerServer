@@ -16,13 +16,8 @@ import java.util.regex.Pattern;
 @Component
 public class UserValidator implements Validator {
     // simple regular expression: https://projects.lukehaas.me/regexhub/
-<<<<<<< HEAD:src/main/java/com/travelplanner/travelplanner_server/validator/UserValidator.java
-
     private static final String USERNAME_PATTERN = "^[a-zA-Z0-9_-]{3,16}$";
 
-=======
-    // private static final String USERNAME_PATTERN = "/^[a-zA-Z0-9_-]{3,16}$/";
->>>>>>> 113f318... comment API:src/main/java/com/travelplanner/travelplanner_server/model/validator/UserValidator.java
     //1
     @Override
     public boolean supports(Class<?> clazz){
@@ -46,16 +41,7 @@ public class UserValidator implements Validator {
             errors.rejectValue("passwordConfirmation", null, "Password and PasswordConfirmation must match!!!");
         }
 
-<<<<<<< HEAD:src/main/java/com/travelplanner/travelplanner_server/validator/UserValidator.java
-//         for user_name
-        Pattern username_pattern = Pattern.compile(this.USERNAME_PATTERN);
-        System.out.println(username_pattern.matcher(user.getUsername()).matches());
-        if(!username_pattern.matcher(user.getUsername()).matches()){
-            System.out.println("username not matching!");
-            errors.rejectValue("username", null, "Username must between 3-16!!!");
-        }
 
-=======
 //        // for user_name
 //        Pattern username_pattern = Pattern.compile(this.USERNAME_PATTERN);
 //        System.out.println(username_pattern.matcher(user.getUsername()).matches());
@@ -63,6 +49,5 @@ public class UserValidator implements Validator {
 //            System.out.println("username not matching!");
 //            errors.rejectValue("username", null, "Username must between 3-16!!!");
 //        }
->>>>>>> 113f318... comment API:src/main/java/com/travelplanner/travelplanner_server/model/validator/UserValidator.java
     }
 }
