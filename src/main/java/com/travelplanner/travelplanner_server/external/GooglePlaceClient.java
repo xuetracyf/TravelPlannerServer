@@ -66,7 +66,7 @@ public class GooglePlaceClient {
      * String MY_API_KEY:                   API KEY provided by google cloud.
      *
      * */
-    public GooglePlaceClient(@Value("${google.map.api.key}") String API_KEY) {
+    public GooglePlaceClient(@Value("AIzaSyB30oDMi7vatWK6iUPUTCKGiAz4rvQYxog") String API_KEY) {
         this.context = new GeoApiContext.Builder()
                 .apiKey(API_KEY)
                 .build();
