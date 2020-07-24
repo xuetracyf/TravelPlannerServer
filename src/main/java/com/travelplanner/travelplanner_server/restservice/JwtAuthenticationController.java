@@ -1,5 +1,7 @@
 package com.travelplanner.travelplanner_server.restservice;
 
+import com.travelplanner.travelplanner_server.model.User;
+import com.travelplanner.travelplanner_server.mongodb.dal.UserDAL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +28,7 @@ public class JwtAuthenticationController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
-    private JwtUserDetailsService userDetailsService;
+    private UserDAL userDAL;
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
@@ -35,8 +37,8 @@ public class JwtAuthenticationController {
         System.out.println("but not here!");
 //        final UserDetails userDetails = userDetailsService
 //                .loadUserByUsername(authenticationRequest.getUsername());
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        final String token = jwtTokenUtil.generateToken(userDetails);
+        User user = userDAL.findUserByUsername(authenticationRequest.getUsername());
+        String token = jwtTokenUtil.generateToken(user);
         System.out.println("token is:" + token);
         return ResponseEntity.ok(new JwtResponse(token));
     }

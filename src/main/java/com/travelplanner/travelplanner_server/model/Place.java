@@ -7,12 +7,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Value;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
 @Value
 @Builder
 @Getter
+@Document(collection = "place")
 public class Place {
 
     private LatLng location; //com.google.maps.model.LatLng;
@@ -22,7 +24,7 @@ public class Place {
     private String id;
     private String name;
     private String description;
-    private int likes;
+    private int upVotes;
     private Date createTime;
 
     @Override

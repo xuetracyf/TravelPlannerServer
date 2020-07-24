@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RecommendController {
 
-    private final TSPService service;
+    @Autowired
+    private TSPService service;
 
-    private final GoogleDistanceClient googleDistanceClient;
+    @Autowired
+    private GoogleDistanceClient googleDistanceClient;
 
     @Autowired
     public RecommendController(TSPService service, GoogleDistanceClient googleDistanceClient) {

@@ -47,7 +47,7 @@ public class PlaceDAL {
                 .location(new LatLng())
                 .photo_refs(null)
                 .description("description")
-                .likes(10)
+                .upVotes(10)
                 .createTime(new Date())
                 .build();
         return mongoTemplate.insert(place);

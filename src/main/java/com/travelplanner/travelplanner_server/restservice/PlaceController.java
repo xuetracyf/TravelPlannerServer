@@ -16,13 +16,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@AllArgsConstructor
-
 public class PlaceController {
 
     @Autowired
-    private final PlaceDAL placeDAL;
-    private final CommentDAL commentDAL;
+    private PlaceDAL placeDAL;
+    @Autowired
+    private CommentDAL commentDAL;
 
     /**
      * Get a single place detail with place_id.
@@ -47,7 +46,7 @@ public class PlaceController {
                 .location(place.getLocation())
                 .description(place.getDescription())
                 .photo_reference(place.getPhoto_refs())
-                .likes(place.getLikes())
+                .upVotes(place.getUpVotes())
                 .comments(comments)
                 .createTime(place.getCreateTime())
                 .build();
@@ -63,6 +62,5 @@ public class PlaceController {
     public ResponseEntity<List<Place>> getAllPlace(@RequestParam(value = "max_width", required = false) String maxWidth) {
         int width = maxWidth == null ? 400 : Integer.parseInt(maxWidth);
         return ResponseEntity.ok(placeDAL.getAllPlace(width));
-
     }
 }

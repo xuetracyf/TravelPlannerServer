@@ -56,7 +56,7 @@ public class UserController {
      * Below is three methods for demo purpose.
      */
     @RequestMapping(value="/signup", method= RequestMethod.POST)
-    public void createNewUser(@RequestBody SignupRequest signupRequest, BindingResult result, HttpSession session) {
+    public ResponseEntity<Void> createNewUser(@RequestBody SignupRequest signupRequest, BindingResult result, HttpSession session) {
         User user = userDAL.findUserByUsername(signupRequest.getUsername());
         if (user != null) {
             throw new DuplicateUserException(user.getUsername());
@@ -87,6 +87,7 @@ public class UserController {
             userDAL.createUser(user);
             System.out.println("userCreated!");
         }
+        return ResponseEntity.ok().body(null);
     }
 
     // This is the test part, can delete after production
@@ -108,8 +109,7 @@ public class UserController {
         if (user == null || !BCrypt.checkpw(jwtRequest.getPassword(), user.getPassword())) {
             throw new FailedAuthenticationException();
         }
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.getUsername());
-        final String token = jwtTokenUtil.generateToken(userDetails);
+        String token = jwtTokenUtil.generateToken(user);
         // Apply library to generate token...
         System.out.println("token is:" + token);
         return ResponseEntity.ok(new JwtResponse(token));

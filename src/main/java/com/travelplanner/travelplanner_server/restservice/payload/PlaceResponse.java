@@ -18,7 +18,7 @@ public class PlaceResponse {
     private LatLng location;
     private List<String> photo_reference;
     private String description;
-    private int likes;
+    private long upVotes;
     private Date createTime;
     private List<Comment> comments;
 }
