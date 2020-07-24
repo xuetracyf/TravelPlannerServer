@@ -28,13 +28,6 @@ public class CommentDAL {
     public Comment createComment(Comment comment) {
         return mongoTemplate.insert(comment);
     }
-//    public void createComment(Comment comment) {
-//        Query query = new Query();
-//        query.addCriteria(Criteria.where("place_id").is(comment.getPlace_id()));
-//        mongoTemplate.insert(comment);
-//        Update update = new Update();
-//        update.push("allComments", comment);
-//        mongoTemplate.findAndModify(query, update, Place.class);
 
     /**
      * @param comment_id

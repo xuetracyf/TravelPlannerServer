@@ -40,7 +40,6 @@ public class PlaceController {
         if (placeId == null) {
             throw new InvalidPlaceIdException();
         }
-
         Place place = placeDAL.findOnePlace(placeId);
         List<Comment> comments = commentDAL.getAllCommentById(placeId);
         PlaceData placeData = PlaceData.builder()

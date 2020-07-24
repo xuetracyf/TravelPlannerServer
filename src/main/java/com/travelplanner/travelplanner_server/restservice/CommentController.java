@@ -5,7 +5,9 @@ import com.travelplanner.travelplanner_server.exception.InvalidPlaceIdException;
 import com.travelplanner.travelplanner_server.model.Comment;
 import com.travelplanner.travelplanner_server.mongodb.dal.CommentDAL;
 import com.travelplanner.travelplanner_server.mongodb.dal.PlaceDAL;
+import com.travelplanner.travelplanner_server.mongodb.dal.TokenDAL;
 import com.travelplanner.travelplanner_server.mongodb.dal.UserDAL;
+import com.travelplanner.travelplanner_server.restservice.config.JwtTokenUtil;
 import com.travelplanner.travelplanner_server.restservice.payload.CommentRequest;
 import com.travelplanner.travelplanner_server.restservice.payload.CommentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,22 +29,28 @@ public class CommentController {
     private UserDAL userDAL;
     @Autowired
     private PlaceDAL placeDAL;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     /**
      * Create a new user comment.
      *
-     * @param placeId        url
      * @param commentRequest body
      * @return comment_id of current comment
      */
-    @RequestMapping(value = "/comment/{placeid}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CommentResponse> post(@PathVariable("placeid") String placeId, @RequestBody CommentRequest commentRequest) {
+    @RequestMapping(value = "/comment", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CommentResponse> post(@RequestHeader("Authorization") String tokenHeader,
+                                                @RequestBody CommentRequest commentRequest) {
+
+        String token = tokenHeader.substring(7);
+        String userId = jwtTokenUtil.getUsernameFromToken(token);
+        String placeId = commentRequest.getPlace_id();
         if (placeId == null || !placeDAL.hasPlace(placeId)) {
             throw new InvalidPlaceIdException();
         }
         Comment comment = Comment.builder()
                 .place_id(placeId)
-                .username(commentRequest.getUsername())
+                .username(userId)
                 .content(commentRequest.getContent())
                 .createTime(new Date())
                 .build();
