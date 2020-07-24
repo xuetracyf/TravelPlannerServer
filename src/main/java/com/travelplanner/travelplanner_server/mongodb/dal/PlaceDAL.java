@@ -4,10 +4,10 @@ import com.google.maps.model.LatLng;
 import com.travelplanner.travelplanner_server.model.Place;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.*;
 import org.springframework.stereotype.Repository;
-import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.Date;
 import java.util.List;
@@ -21,36 +21,31 @@ public class PlaceDAL {
     private final CommentDAL commentDAL;
 
 
-    /**
-     * retrieve a single place details object by place id
-     * @param placeId place id you want to rtrieve
-     * @param maxWidth place pic size, default 400
-     * @return the corresponding place object
-     */
-    public Place getSinglePlace(String placeId, int maxWidth) {
-        if (hasPlace(placeId)) {
+
+    public void savePlaces(List<Place> places) {
+        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, Place.class);
+        for (Place place: places) {
             Query query = new Query();
-            query.addCriteria(Criteria.where("id").is(placeId));
-            return mongoTemplate.findOne(query, Place.class);
+            query.addCriteria(Criteria.where("id").is(place.getId()));
+            Update update = new Update();
+            update.set("name", place.getName());
+            update.set("location", place.getLocation());
+            update.set("photo_refs", place.getPhoto_refs());
+            update.set("total_rating", place.getTotal_rating());
+            update.set("city", place.getCity());
+            update.setOnInsert("upVotes", 0);
+            update.setOnInsert("createAt", new Date());
+            bulkOperations.upsert(query, update);
         }
-        return createPlace(placeId);
+        bulkOperations.execute();
+
     }
 
-    /**
-     * FAKE TEST FUNCTION
-     * @return a place object that has been stored in db
-     */
-    private Place createPlace(String placeId) {
-        Place place = Place.builder()
-                .id(placeId)
-                .name("SF")
-                .location(new LatLng())
-                .photo_refs(null)
-                .description("description")
-                .upVotes(10)
-                .createTime(new Date())
-                .build();
-        return mongoTemplate.insert(place);
+    public Place findOnePlace(String placeId) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(placeId));
+        return mongoTemplate.findOne(query, Place.class);
+
     }
 
     /**
@@ -65,14 +60,25 @@ public class PlaceDAL {
 
     /**
      * retrieve all place details object
-     * @param maxWidth pic max width, default 400
-     * @return
+     * @param city: city name
+     * @return list of place
      */
-    public List<Place> getAllPlace(int maxWidth) {
-        return mongoTemplate.findAll(Place.class, "place");
+    public List<Place> getAllPlaceFromCity(String city) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("city").is(city));
+        return mongoTemplate.find(query, Place.class);
     }
 
-//    public boolean updateUpVotes(String placeId){
-//        Update update = new
-//    }
+    /**
+     * retrieve all place details object
+     * @param city: city name
+     * @param textQuery: text query
+     * @return list of place
+     */
+    public List<Place> getAllPlaceFromCity(String city, String textQuery) {
+        TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matching(textQuery);
+        TextQuery query = TextQuery.queryText(textCriteria).sortByScore();
+        // query.addCriteria(Criteria.where("city").is(city));
+        return mongoTemplate.find(query, Place.class);
+    }
 }

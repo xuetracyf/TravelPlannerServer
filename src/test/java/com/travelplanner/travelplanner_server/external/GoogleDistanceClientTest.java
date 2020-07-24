@@ -36,6 +36,7 @@ public class GoogleDistanceClientTest {
             ValueGraph graph = client.generateDistGraph(startPoint, place_ids);
             graph.toString();
         } catch (Exception e) {
+            e.printStackTrace();
             fail("An exception shouldn't be thrown");
         }
     }

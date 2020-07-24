@@ -24,8 +24,8 @@ After that, install Lombok plugin:
 4. Restart your Intellij
 
 # Add Google Map API Key
-Get a Google Map API key: https://developers.google.com/maps/documentation/javascript/get-api-key
-
+1. Get a Google Map API key: https://developers.google.com/maps/documentation/javascript/get-api-key
+2. Enable Place API and Distance Matrix API services.
 
 # Add your Google Map API Key as an environment variable in your run configuration in intellij
 Follow official tutorial: https://www.jetbrains.com/help/objc/add-environment-variables-and-program-arguments.html#add-environment-variables

@@ -5,15 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.model.LatLng;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Value;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
-@Value
+
 @Builder
 @Getter
+@Setter
 @Document(collection = "place")
 public class Place {
 
@@ -22,10 +25,13 @@ public class Place {
     private List<String> photo_refs;
     @Id
     private String id;
+    @TextIndexed
     private String name;
+    @Indexed
+    private String city;
     private String description;
-    private int upVotes;
-    private Date createTime;
+    private long upVotes;
+    private Date createAt;
 
     @Override
     public boolean equals(Object obj) {

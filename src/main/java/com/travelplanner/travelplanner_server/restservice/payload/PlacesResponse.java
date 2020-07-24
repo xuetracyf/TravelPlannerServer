@@ -1,11 +1,13 @@
 package com.travelplanner.travelplanner_server.restservice.payload;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
-@AllArgsConstructor
+@Builder
 @Getter
-public class PlaceResponse {
+public class PlacesResponse {
     private String status;
-    private PlaceData data;
+    private PlacesData data;
+
+
 }

@@ -32,6 +32,12 @@ public class GooglePlaceClientTest {
     }
 
     @Test
+    void getCityPlacesWithQueryTest() {
+        List<Place> list1 = client.getCityPlacesWithQuery("Vancouver", "UBC", 5);
+        PrintPlacesDetails(list1);
+    }
+
+    @Test
     void getCityPlacesInCircleTest() {
         String city_name = "San Francisco";
         List<Place> list = client.getCityPlacesInCircle(city_name, 5, 50000);

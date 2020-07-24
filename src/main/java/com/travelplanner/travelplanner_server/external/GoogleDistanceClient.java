@@ -60,7 +60,7 @@ public class GoogleDistanceClient {
     * Params:
     * String MY_API_KEY:                   API KEY provided by google cloud.
     * */
-    public GoogleDistanceClient(@Value("AIzaSyB30oDMi7vatWK6iUPUTCKGiAz4rvQYxog") String API_KEY) {
+    public GoogleDistanceClient(@Value("${google.map.api.key}") String API_KEY) {
         this.context = new GeoApiContext.Builder()
                 .apiKey(API_KEY)
                 .build();
