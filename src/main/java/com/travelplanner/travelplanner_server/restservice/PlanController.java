@@ -24,8 +24,6 @@ public class PlanController {
     private PlanDAL planDAL;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
-    @Autowired
-    private UserDAL userDAL;
 
 
     @PutMapping(value = "/plan",produces = MediaType.APPLICATION_JSON_VALUE)
@@ -35,12 +33,12 @@ public class PlanController {
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             token = requestTokenHeader.substring(7);
         }
-        String username = jwtTokenUtil.getUsernameFromToken(token);
-        User user = userDAL.findUserByUsername(username);
-        Plan plan = planDAL.findPlanByUserAndName(user,planRequest.getName());
+        String user_id = jwtTokenUtil.getUserIdFromToken(token);
+        Plan plan = planDAL.findPlanByUserIdAndName(user_id,planRequest.getName());
         if (plan != null) {
             planDAL.updatePlan(plan,planRequest.getPlace_id(),new Date());
             plan.setPlace_id(planRequest.getPlace_id());
+            plan.setUser_id(user_id);
             plan.setUpdatedAt(new Date());
         }
         else {
@@ -50,7 +48,7 @@ public class PlanController {
                     .place_id(planRequest.getPlace_id())
                     .updatedAt(new Date())
                     .createdAt(new Date())
-                    .user(user)
+                    .user_id(user_id)
                     .build();
             planDAL.createPlan(plan);
         }
@@ -65,9 +63,8 @@ public class PlanController {
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             token = requestTokenHeader.substring(7);
         }
-        String username = jwtTokenUtil.getUsernameFromToken(token);
-        User user = userDAL.findUserByUsername(username);
-        List<Plan> planList = planDAL.findPlansByUser(user);
+        String user_id = jwtTokenUtil.getUserIdFromToken(token);
+        List<Plan> planList = planDAL.findPlansByUserId(user_id);
         GetPlanResponse getPlanResponse = new GetPlanResponse("ok",new PlansData(planList));
         return ResponseEntity.ok().body(getPlanResponse);
     }

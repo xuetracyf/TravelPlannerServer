@@ -1,13 +1,11 @@
 package com.travelplanner.travelplanner_server.mongodb.dal;
 
 import com.travelplanner.travelplanner_server.model.Plan;
-import com.travelplanner.travelplanner_server.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.stereotype.Indexed;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -25,30 +23,32 @@ public class PlanDAL {
     public Plan createPlan(Plan plan) {
         return mongoTemplate.insert(plan);
     }
+
     public Plan updatePlan(Plan plan, List<String> place_id, Date date) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(plan.getId()));
         Update update = new Update();
-        update.set("place_id",place_id);
-        update.set("updatedAt",date);
-        return mongoTemplate.findAndModify(query,update,Plan.class);
+        update.set("place_id", place_id);
+        update.set("updatedAt", date);
+        return mongoTemplate.findAndModify(query, update, Plan.class);
     }
+
     public void deletePlan(String planId) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(planId));
-        mongoTemplate.remove(query,Plan.class);
+        mongoTemplate.remove(query, Plan.class);
     }
 
-    public List<Plan> findPlansByUser(User user) {
+    public List<Plan> findPlansByUserId(String userId) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("user").is(user));
-        return mongoTemplate.find(query,Plan.class);
+        query.addCriteria(Criteria.where("user_id").is(userId));
+        return mongoTemplate.find(query, Plan.class);
     }
 
-    public Plan findPlanByUserAndName(User user, String name) {
+    public Plan findPlanByUserIdAndName(String userId, String name) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("user").is(user).and("name").is(name));
-        return mongoTemplate.findOne(query,Plan.class);
+        query.addCriteria(Criteria.where("user_id").is(userId).and("name").is(name));
+        return mongoTemplate.findOne(query, Plan.class);
     }
 
 }

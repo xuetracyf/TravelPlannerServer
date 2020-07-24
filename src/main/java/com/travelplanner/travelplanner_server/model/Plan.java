@@ -19,8 +19,7 @@ import java.util.List;
 public class Plan {
     @Id
     private String id;
-    @DBRef
-    private User user;
+    private String user_id;
     private List<String> place_id;
     private String name;
     private Date createdAt;
