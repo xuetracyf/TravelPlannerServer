@@ -6,9 +6,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 import org.springframework.data.mongodb.core.query.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,9 +20,6 @@ public class PlaceDAL {
 
     @Autowired
     private final MongoTemplate mongoTemplate;
-    private final CommentDAL commentDAL;
-
-
 
     public void savePlaces(List<Place> places) {
         BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, Place.class);
@@ -77,8 +76,9 @@ public class PlaceDAL {
      */
     public List<Place> getAllPlaceFromCity(String city, String textQuery) {
         TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matching(textQuery);
-        TextQuery query = TextQuery.queryText(textCriteria).sortByScore();
-        // query.addCriteria(Criteria.where("city").is(city));
+        Query query = TextQuery.queryText(textCriteria);
+        query.addCriteria(Criteria.where("city").is(city));
         return mongoTemplate.find(query, Place.class);
+
     }
 }
