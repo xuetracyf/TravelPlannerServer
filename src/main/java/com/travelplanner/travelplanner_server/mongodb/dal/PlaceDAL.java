@@ -30,7 +30,7 @@ public class PlaceDAL {
             update.set("name", place.getName());
             update.set("location", place.getLocation());
             update.set("photo_refs", place.getPhoto_refs());
-            update.set("total_rating", place.getTotal_rating());
+            update.set("rating", place.getRating());
             update.set("city", place.getCity());
             update.setOnInsert("upVotes", 0);
             update.setOnInsert("createAt", new Date());

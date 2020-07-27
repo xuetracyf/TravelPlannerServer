@@ -20,5 +20,6 @@ public class PlaceData {
     private String description;
     private long upVotes;
     private Date createAt;
+    private boolean isLiked;
     private List<Comment> comments;
 }

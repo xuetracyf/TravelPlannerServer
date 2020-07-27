@@ -21,7 +21,7 @@ import java.util.Date;
 public class Place {
 
     private LatLng location; //com.google.maps.model.LatLng;
-    private int total_rating;
+    private float rating;
     private List<String> photo_refs;
     @Id
     private String id;

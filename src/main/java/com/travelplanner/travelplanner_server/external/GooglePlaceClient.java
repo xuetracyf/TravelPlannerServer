@@ -4,10 +4,13 @@ import com.google.maps.*;
 import com.google.maps.GeoApiContext;
 import com.google.maps.NearbySearchRequest;
 import com.google.maps.PlacesApi;
+import com.google.maps.errors.ApiException;
+import com.google.maps.errors.InvalidRequestException;
 import com.google.maps.model.*;
 //import com.travelplanner.travelplanner_server.model.City;
 import com.travelplanner.travelplanner_server.model.Place;
 
+import java.io.IOException;
 import java.security.PublicKey;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -223,43 +226,38 @@ public class GooglePlaceClient {
         //prepare result
         HashSet<Place> places = new HashSet<Place>();
 
-        String nextPageToken = "";
-        while (places.size() < max_place_number && nextPageToken != null) {
-            NearbySearchRequest request = nextPageToken.length() == 0
-                    ? PlacesApi.nearbySearchQuery(this.context, location)
-                    : PlacesApi.nearbySearchNextPage(this.context, nextPageToken);
+        NearbySearchRequest request = PlacesApi.nearbySearchQuery(context, location);
+        request.location(location);
+        //radius larger than 50000 is not support by google API right now.
+        request.radius(Math.min(radius_in_meter, 50000));
+        request.type(PlaceType.TOURIST_ATTRACTION);
 
-            request.location(location);
-            //radius larger than 50000 is not support by google API right now.
-            request.radius(Math.min(radius_in_meter, 50000));
-            request.type(PlaceType.TOURIST_ATTRACTION);
-            try {
-                PlacesSearchResponse response = request.await();
-                PlacesSearchResult[] results = response.results;
-                nextPageToken = response.nextPageToken;
-
-                //for de-duplicate
-//                int last_round_size = places.size();
+        try {
+            PlacesSearchResponse response = request.await();
+            PlacesSearchResult[] results = response.results;
+            for (int i = 0; places.size() < max_place_number && i < results.length; i++) {
+                PlacesSearchResult new_place_result = results[i];
+                Place new_place = ConvertGooglePlaceResponseToPlaceModel(new_place_result);
+                places.add(new_place);
+            }
+            while (places.size() < max_place_number && response.nextPageToken != null) {
+                try {
+                    response = PlacesApi.nearbySearchNextPage(context, response.nextPageToken).await();
+                } catch (InvalidRequestException e) {
+                    Thread.sleep(200); // Wait some time to call the nextPage token
+                    continue;
+                }
+                results = response.results;
                 for (int i = 0; places.size() < max_place_number && i < results.length; i++) {
                     PlacesSearchResult new_place_result = results[i];
-
                     Place new_place = ConvertGooglePlaceResponseToPlaceModel(new_place_result);
-
                     places.add(new_place);
-
-
-                    //for de-duplicate
-//                    if (places.size() == last_round_size) {
-//                        return new ArrayList<Place>(places);
-//                    }
-//                    last_round_size = places.size();
                 }
-
-            } catch (Exception e) {
-                handleGooglePlaceAPIException();
-                e.printStackTrace();
             }
 
+        } catch (Exception e) {
+            handleGooglePlaceAPIException();
+            e.printStackTrace();
         }
 
         return new ArrayList<Place>(places);
@@ -268,7 +266,7 @@ public class GooglePlaceClient {
     private Place ConvertGooglePlaceResponseToPlaceModel(PlacesSearchResult new_place_result) {
         return Place.builder()
                 .name(new_place_result.name)
-                .total_rating(new_place_result.userRatingsTotal)
+                .rating(new_place_result.rating)
                 .id(new_place_result.placeId)
                 .photo_refs(getPhotoRefsFromResult(new_place_result))
                 .location(new_place_result.geometry.location)
@@ -282,42 +280,35 @@ public class GooglePlaceClient {
         //prepare result
         HashSet<Place> places = new HashSet<Place>();
 
-        String nextPageToken = "";
 
-        //call google api to get the list
-        while (places.size() < max_place_number && nextPageToken != null) {
-            TextSearchRequest request = nextPageToken.length() == 0
-                    ? PlacesApi.textSearchQuery(this.context, query_text)
-                    : PlacesApi.textSearchNextPage(this.context, nextPageToken);
+        TextSearchRequest request = PlacesApi.textSearchQuery(this.context, query_text);
 
-            try {
-                PlacesSearchResponse search_response = request.await();
-                PlacesSearchResult[] results = search_response.results;
-
-                nextPageToken = search_response.nextPageToken;
-
-
-                //for de-duplicate
-                // int last_round_size = places.size();
+        try {
+            PlacesSearchResponse response = request.await();
+            PlacesSearchResult[] results = response.results;
+            for (int i = 0; places.size() < max_place_number && i < results.length; i++) {
+                PlacesSearchResult new_place_result = results[i];
+                Place new_place = ConvertGooglePlaceResponseToPlaceModel(new_place_result);
+                places.add(new_place);
+            }
+            while (places.size() < max_place_number && response.nextPageToken != null) {
+                try {
+                    response = PlacesApi.textSearchNextPage(context, response.nextPageToken).await();
+                } catch (InvalidRequestException e) {
+                    Thread.sleep(200); // Wait some time to call the nextPage token
+                    continue;
+                }
+                results = response.results;
                 for (int i = 0; places.size() < max_place_number && i < results.length; i++) {
                     PlacesSearchResult new_place_result = results[i];
-
                     Place new_place = ConvertGooglePlaceResponseToPlaceModel(new_place_result);
-
                     places.add(new_place);
-
-                    //for de-duplicate
-//                    if (last_round_size == places.size()) {
-//                        return new ArrayList<Place>(places);
-//                    }
-//                    last_round_size = places.size();
-
                 }
-            } catch (Exception e) {
-                handleGooglePlaceAPIException();
-                e.printStackTrace();
-                break;
             }
+
+        } catch (Exception e) {
+            handleGooglePlaceAPIException();
+            e.printStackTrace();
         }
 
         return new ArrayList<Place>(places);
@@ -349,7 +340,7 @@ public class GooglePlaceClient {
 
                     Place new_place = Place.builder()
                             .name(new_place_result.name)
-                            .total_rating(new_place_result.userRatingsTotal)
+                            .rating(new_place_result.rating)
                             .id(new_place_result.placeId)
                             .photo_refs(getPhotoRefsFromResult(new_place_result))
                             .location(new_place_result.geometry.location)
@@ -374,35 +365,38 @@ public class GooglePlaceClient {
         //prepare result
         HashSet<Place> places = new HashSet<Place>();
 
-        String nextPageToken = "";
+        TextSearchRequest request = PlacesApi.textSearchQuery(this.context, query_text);
 
-        //call google api to get the list
-        while (places.size() < max_place_number && nextPageToken != null) {
-            TextSearchRequest request = nextPageToken.length() == 0
-                    ? PlacesApi.textSearchQuery(this.context, query_text)
-                    : PlacesApi.textSearchNextPage(this.context, nextPageToken);
-
-            try {
-                PlacesSearchResponse search_response = request.await();
-                PlacesSearchResult[] results = search_response.results;
-
-                nextPageToken = search_response.nextPageToken;
-
-
+        try {
+            PlacesSearchResponse response = request.await();
+            PlacesSearchResult[] results = response.results;
+            for (int i = 0; places.size() < max_place_number && i < results.length; i++) {
+                PlacesSearchResult new_place_result = results[i];
+                Place new_place = ConvertGooglePlaceResponseToPlaceModel(new_place_result);
+                if (new_place.isInCircle(new LatLng(center_lat, center_lng), radius_in_meter)) {
+                    places.add(new_place);
+                }
+            }
+            while (places.size() < max_place_number && response.nextPageToken != null) {
+                try {
+                    response = PlacesApi.textSearchNextPage(context, response.nextPageToken).await();
+                } catch (InvalidRequestException e) {
+                    Thread.sleep(200); // Wait some time to call the nextPage token
+                    continue;
+                }
+                results = response.results;
                 for (int i = 0; places.size() < max_place_number && i < results.length; i++) {
                     PlacesSearchResult new_place_result = results[i];
-
                     Place new_place = ConvertGooglePlaceResponseToPlaceModel(new_place_result);
-
                     if (new_place.isInCircle(new LatLng(center_lat, center_lng), radius_in_meter)) {
                         places.add(new_place);
                     }
                 }
-            } catch (Exception e) {
-                handleGooglePlaceAPIException();
-                e.printStackTrace();
-                break;
             }
+
+        } catch (Exception e) {
+            handleGooglePlaceAPIException();
+            e.printStackTrace();
         }
 
         return new ArrayList<Place>(places);
@@ -431,7 +425,7 @@ public class GooglePlaceClient {
                 .id(place_id)
                 .location(details.geometry.location)
                 .photo_refs(getPhotoRefsFromResult(details))
-                .total_rating(details.userRatingsTotal)
+                .rating(details.rating)
                 .build();
 
         return result_place;
@@ -471,7 +465,7 @@ public class GooglePlaceClient {
         System.out.println("------------------");
         System.out.println("name: " + place.getName());
         System.out.println("placeid: " + place.getId());
-        System.out.println("total rating: " + place.getTotal_rating());
+        System.out.println("rating: " + place.getRating());
         System.out.println("location: " + place.getLocation().lat + place.getLocation().lng);
         //System.out.println(place.getPhoto_refs());
         System.out.println("------------------");
