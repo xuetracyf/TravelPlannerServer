@@ -1,5 +1,6 @@
 package com.travelplanner.travelplanner_server.mongodb.dal;
 
+import com.travelplanner.travelplanner_server.model.Comment;
 import com.travelplanner.travelplanner_server.model.Plan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -33,10 +34,10 @@ public class PlanDAL {
         return mongoTemplate.findAndModify(query, update, Plan.class);
     }
 
-    public void deletePlan(String planId) {
+    public void deletePlanByUserIdAndName(String name,String userId) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("id").is(planId));
-        mongoTemplate.remove(query, Plan.class);
+        query.addCriteria(Criteria.where("name").is(name).and("user_id").is(userId));
+        mongoTemplate.findAndRemove(query, Plan.class);
     }
 
     public List<Plan> findPlansByUserId(String userId) {
@@ -49,6 +50,12 @@ public class PlanDAL {
         Query query = new Query();
         query.addCriteria(Criteria.where("user_id").is(userId).and("name").is(name));
         return mongoTemplate.findOne(query, Plan.class);
+    }
+
+    public boolean hasPlan(String name) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("name").is(name));
+        return mongoTemplate.exists(query, Plan.class);
     }
 
 }

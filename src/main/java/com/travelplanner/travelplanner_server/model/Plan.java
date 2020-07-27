@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
+@CompoundIndex(def="{'user_id': 1, 'name': 1}", unique = true)
 public class Plan {
     @Id
     private String id;
@@ -24,5 +26,4 @@ public class Plan {
     private String name;
     private Date createdAt;
     private Date updatedAt;
-
 }

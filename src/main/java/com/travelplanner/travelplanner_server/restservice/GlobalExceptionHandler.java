@@ -54,4 +54,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> DuplicateVoteException(Exception ex, WebRequest request) {
         return ResponseEntity.badRequest().body(new ErrorResponse(ex.getMessage()));
     }
+
 }
